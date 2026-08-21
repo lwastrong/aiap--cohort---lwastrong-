@@ -498,6 +498,7 @@
     const list = loadPosts();
     postsEl.innerHTML = list.length ? "" : '<p class="hint">No community posts yet on this device. Be the first!</p>';
     for(const p of list){
+      const cmts = p.comments || [];
       const card = document.createElement("article");
       card.className = "card"; card.style.marginBottom = "12px";
       card.innerHTML =
@@ -509,14 +510,51 @@
         '<p style="font-size:.98rem">' + escapeHtml(p.text) + '</p>' +
         (p.photos && p.photos.length
           ? '<div style="display:flex; gap:8px; flex-wrap:wrap;">' + p.photos.map(src => '<img src="' + src + '" alt="Community photo of ' + escapeHtml(p.place) + '" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--border);">').join('') + '</div>'
-          : '');
+          : '') +
+        // Likes + comments
+        '<div style="margin-top:10px; display:flex; gap:12px; align-items:center;">' +
+          '<button type="button" class="like-btn" data-id="' + p.id + '" style="border:2px solid var(--teal); background:' + (p.liked ? 'var(--teal)' : 'transparent') + '; color:' + (p.liked ? '#fff' : 'var(--teal)') + '; font-weight:700; border-radius:999px; padding:7px 14px; cursor:pointer; font-size:.95rem;">' + (p.liked ? '💛 Liked' : '👍 Like') + ' (' + (p.likes || 0) + ')</button>' +
+          '<span class="meta">💬 ' + cmts.length + (cmts.length === 1 ? ' comment' : ' comments') + '</span>' +
+        '</div>' +
+        (cmts.length
+          ? '<div style="margin-top:8px">' + cmts.map(c =>
+              '<div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:8px 12px; margin-top:6px; font-size:.95rem;"><strong>' + escapeHtml(c.name || "Anonymous") + '</strong> <span class="meta">· ' + new Date(c.ts).toLocaleDateString() + '</span><br>' + escapeHtml(c.text) + '</div>'
+            ).join('') + '</div>'
+          : '') +
+        '<form class="cmt-form" data-id="' + p.id + '" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">' +
+          '<input type="text" class="cmt-name" placeholder="Name (optional)" style="flex:0 1 170px; min-width:120px;">' +
+          '<input type="text" class="cmt-text" placeholder="Write a comment…" required maxlength="500" style="flex:1 1 200px; min-width:160px;">' +
+          '<button type="submit" class="btn-gold" style="padding:8px 16px;">Comment</button>' +
+        '</form>';
       postsEl.appendChild(card);
     }
   }
   postsEl.addEventListener("click", e => {
-    const btn = e.target.closest(".del-post"); if(!btn) return;
-    savePosts(loadPosts().filter(p => String(p.id) !== btn.dataset.id));
-    renderPosts();
+    const del = e.target.closest(".del-post");
+    if(del){
+      savePosts(loadPosts().filter(p => String(p.id) !== del.dataset.id));
+      renderPosts();
+      return;
+    }
+    const like = e.target.closest(".like-btn");
+    if(like){
+      const list = loadPosts();
+      const p = list.find(x => String(x.id) === like.dataset.id);
+      if(!p) return;
+      p.liked = !p.liked;
+      p.likes = Math.max(0, (p.likes || 0) + (p.liked ? 1 : -1));
+      if(savePosts(list)) renderPosts();
+    }
+  });
+  postsEl.addEventListener("submit", e => {
+    const f = e.target.closest(".cmt-form"); if(!f) return;
+    e.preventDefault();
+    const text = f.querySelector(".cmt-text").value.trim(); if(!text) return;
+    const list = loadPosts();
+    const p = list.find(x => String(x.id) === f.dataset.id);
+    if(!p) return;
+    (p.comments = p.comments || []).push({ name: f.querySelector(".cmt-name").value.trim(), text, ts: Date.now() });
+    if(savePosts(list)) renderPosts();
   });
   postForm.addEventListener("submit", async e => {
     e.preventDefault();
