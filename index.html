@@ -85,7 +85,7 @@
       <div class="search-row">
         <div class="grow">
           <label for="addr">Where are you going?</label>
-          <input type="text" id="addr" placeholder="Anywhere in the US — the coast, the mountains, a lake town, or a big city" autocomplete="street-address">
+          <input type="text" id="addr" placeholder="Anywhere in the world — the coast, the mountains, a lake town, or a big city" autocomplete="street-address">
         </div>
         <div>
           <label for="zip">Search for zip code</label>
@@ -250,11 +250,14 @@
   });
 
   async function geocode(q){
-    const url = NOMINATIM + "?format=json&limit=1&q=" + encodeURIComponent(q);
+    // Worldwide search with US priority: among the top matches, prefer a United States one;
+    // an explicit international search (e.g. "Tokyo, Japan") still goes exactly where it says
+    const url = NOMINATIM + "?format=json&limit=5&q=" + encodeURIComponent(q);
     const res = await fetch(url, {headers:{"Accept":"application/json"}});
     const arr = await res.json();
     if(!arr.length) return null;
-    return {lat:+arr[0].lat, lon:+arr[0].lon, name:arr[0].display_name};
+    const best = arr.find(r => /United States/.test(r.display_name)) || arr[0];
+    return {lat:+best.lat, lon:+best.lon, name:best.display_name};
   }
 
   async function gplaces(url, body, wantToken){

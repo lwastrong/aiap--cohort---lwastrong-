@@ -8,7 +8,7 @@ Inspired by teammate [Art Thomas](https://lwastrong.com), founder of LWA Strong,
 
 ## What it does
 
-Type any US destination and instantly see nearby places across three categories — **Stay · Eat · Do** — each with real access details, star ratings, and review counts pulled live from Google Maps (Places API).
+Type any destination in the world — US searched first — and instantly see nearby places across three categories — **Stay · Eat · Do** — each with real access details, star ratings, and review counts pulled live from Google Maps (Places API).
 
 **Live app:** https://lwastrong.github.io/aiap--cohort---lwastrong-/
 
@@ -18,7 +18,7 @@ Type any US destination and instantly see nearby places across three categories 
 
 ## Features
 
-- Nationwide destination search with 1 / 2 / 5 / 10-mile radius, or use your current location
+- Worldwide destination search (US prioritized) with zip code option, 1 / 2 / 5 / 10-mile radius, or use your current location
 - Three result categories: Stay · Eat · Do
 - **Feel-good fuel rules**: fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out; meat-first spots (steakhouse, grill, seafood, burgers) get the badge — food that keeps everyone feeling their best
 - **Carnivore hack tips**: burger spots get an on-card tip — order the patties only, skip the bun. Chick-fil-A is hard-blocked by name and will never appear in results (doesn't meet our feel-good fuel standards)
