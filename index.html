@@ -99,7 +99,7 @@
         <button type="button" class="btn-ghost" id="locBtn">Use my location</button>
       </div>
     </form>
-    <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details from live OpenStreetMap data. All that's left to plan is how much fun you're going to have.</p>
+    <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details, ratings, and reviews from live Google Maps data. All that's left to plan is how much fun you're going to have.</p>
     <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
     <p class="hint">🌻 <strong>No seed oils, either.</strong> We believe your brain and nervous system deserve better fuel. Every restaurant card has a Seed Oil Check button — verify what a kitchen cooks with at <a href="https://www.seedoilscout.com/" target="_blank" rel="noopener">Seed Oil Scout</a> before you book the table.</p>
     <p class="hint">💡 <strong>Carnivore hack:</strong> almost any meat-first spot works if you order right — at a burger place, get the patties only and skip the bun. ⛔ <strong>Hard pass: Chick-fil-A.</strong> The ingredient list doesn't meet our feel-good fuel standards — it will never appear in FreeWheelers results.</p>
@@ -162,35 +162,38 @@
 <footer>
   <div class="cta" style="font-size:1.1rem"><strong>Your next trip is waiting.</strong> Pick a destination, get access, go. Five minutes, tops.</div>
   <div>FreeWheelers · Inspired by <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas &amp; LWA Strong</a> · Access Included. Adventure Guaranteed.</div>
-  <p class="disclaimer">Access details are community-reported via OpenStreetMap and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means nobody has reported it yet. Always confirm directly with the venue before visiting. FreeWheelers is an informational tool, not a guarantee of access.</p>
+  <p class="disclaimer">Access details come from Google Maps and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means Google has no report for it yet. Always confirm directly with the venue before visiting. FreeWheelers is an informational tool, not a guarantee of access.</p>
 </footer>
 
 <script>
 (function(){
   "use strict";
   const NOMINATIM = "https://nominatim.openstreetmap.org/search";
-  // Multiple free Overpass servers — if one is busy, the next is tried automatically
-  const OVERPASS_ENDPOINTS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://lz4.overpass-api.de/api/interpreter",
-    "https://z.overpass-api.de/api/interpreter"
-  ];
 
-  const HOTEL_RE = /^(hotel|motel|guest_house|hostel|apartment|chalet|resort)$/;
-  const EAT_RE = /^(restaurant|cafe)$/;
-  // LWA nutrition rules: no fast food, nothing fried/processed/dessert-first
-  const BAD_CUISINE_RE = /(pizza|fried|friture|fried_chicken|chicken;|^chicken$|donut|doughnut|dessert|ice_cream|cake|bakery|pastry|pancake|waffle|crepe|sandwich|noodle|pasta|ramen|bubble_tea|juice|smoothie|bbq|barbecue)/;
+  // ===== Google Maps (Places API New) =====
+  // Paste your Google Maps API key between the quotes below.
+  const GOOGLE_API_KEY = "AIzaSyAfzZiYJQsDFrA-aCswyru0BzD7s1RRdcY";
+  const PLACES_NEARBY = "https://places.googleapis.com/v1/places:searchNearby";
+  const PLACES_TEXT   = "https://places.googleapis.com/v1/places:searchText";
+  const FIELD_MASK = [
+    "places.id","places.displayName","places.types","places.primaryTypeDisplayName",
+    "places.location","places.formattedAddress","places.nationalPhoneNumber",
+    "places.websiteUri","places.accessibilityOptions","places.goodForChildren",
+    "places.rating","places.userRatingCount"
+  ].join(",");
+  const TODO_TYPES_A = ["tourist_attraction","museum","art_gallery","movie_theater","performing_arts_theater","library","community_center","casino"];
+  const TODO_TYPES_B = ["park","zoo","aquarium","amusement_park","national_park","hiking_area","gym","golf_course","bowling_alley"];
+
+  // LWA nutrition rules: no fast food, nothing fried/processed/dessert-first (checked against Google place types)
+  const BAD_TYPES_RE = /(pizza|fast_food|fried|sandwich|bagel|bakery|dessert|donut|doughnut|ice_cream|candy|chocolate|confectionery|juice|smoothie|bubble_tea|tea_house|ramen|noodle|pasta|waffle|pancake|crepe|barbecue|bbq)/;
   // Carnivore/keto-friendly, meat-first styles get the badge (no BBQ — sauces are sugar bombs)
-  const GOOD_CUISINE_RE = /(steak|grill|seafood|fish|oyster|brazilian|argentinian|churrasco|korean|kebab|greek|turkish|lebanese|persian|mediterranean|american|burger|brunch|breakfast)/;
+  const GOOD_CUISINE_RE = /(steak|grill|seafood|fish|oyster|brazilian|argentinian|churrasco|korean|kebab|greek|turkish|lebanese|persian|mediterranean|american|hamburger|burger|brunch|breakfast)/;
   // Hard-blocked by name: never shown, no matter how it's tagged (doesn't meet feel-good fuel standards)
   const BLOCKED_NAME_RE = /chick[\s-]?fil[\s-]?a/i;
   // Vegetarian/vegan restaurants: kept in the list but marked CRITICAL — NOT RECOMMENDED
   const VEG_RE = /(vegetarian|vegan)/;
-  const TODO_TOURISM_RE = /^(museum|attraction|gallery|zoo|aquarium|theme_park|viewpoint|artwork)$/;
-  const TODO_AMENITY_RE = /^(theatre|cinema|arts_centre|community_centre|library|casino)$/;
-  const TODO_LEISURE_RE = /^(park|garden|sports_centre|fitness_centre|swimming_pool|bowling_alley|stadium|nature_reserve|playground|water_park|amusement_arcade|horse_riding|golf_course|miniature_golf|ice_rink|fitness_station)$/;
-  const FAMILY_KIND_RE = /^(playground|water_park|amusement_arcade|zoo|aquarium|theme_park|park|garden|nature_reserve|swimming_pool|bowling_alley|ice_cream|miniature_golf|ice_rink)$/;
-  const ADULT_RE = /^(bar|pub|biergarten|casino)$/;
+  const FAMILY_TYPES = new Set(["zoo","aquarium","amusement_park","water_park","park","national_park","playground","bowling_alley","ice_skating_rink","miniature_golf","museum"]);
+  const ADULT_TYPES = new Set(["bar","night_club","casino","pub","liquor_store"]);
 
   let data = {hotels:[], eat:[], todo:[]};
   let activeCat = "hotels";
@@ -244,102 +247,132 @@
     return {lat:+arr[0].lat, lon:+arr[0].lon, name:arr[0].display_name};
   }
 
-  async function runSearch(lat, lon){
-    setLoading(true, "Searching real places nearby…");
-    const r = radius.value;
-    const q = `[out:json][timeout:60];
-(
-  nwr["tourism"~"^(hotel|motel|guest_house|hostel|apartment|chalet|resort)$"](around:${r},${lat},${lon});
-  nwr["amenity"~"^(restaurant|cafe)$"](around:${r},${lat},${lon});
-  nwr["tourism"~"^(museum|attraction|gallery|zoo|aquarium|theme_park|viewpoint|artwork)$"](around:${r},${lat},${lon});
-  nwr["amenity"~"^(theatre|cinema|arts_centre|community_centre|library|casino)$"](around:${r},${lat},${lon});
-  nwr["leisure"~"^(park|garden|sports_centre|fitness_centre|swimming_pool|bowling_alley|stadium|nature_reserve|playground|water_park|amusement_arcade|horse_riding|golf_course|miniature_golf|ice_rink|fitness_station)$"](around:${r},${lat},${lon});
-);
-out center tags;`;
-    let json = null, lastErr = null;
-    outer:
-    for(let pass = 0; pass < 2 && !json; pass++){
-      if(pass > 0){
-        setLoading(true, "Map servers are busy — waiting a few seconds and retrying automatically…");
-        await new Promise(rs => setTimeout(rs, 4000));
-      }
-      for(let i = 0; i < OVERPASS_ENDPOINTS.length; i++){
-        try{
-          setLoading(true, "Searching real places nearby…" + (i > 0 || pass > 0 ? " (map server attempt " + (pass*OVERPASS_ENDPOINTS.length + i + 1) + ")" : ""));
-          const res = await fetch(OVERPASS_ENDPOINTS[i], {method:"POST", body:"data="+encodeURIComponent(q), headers:{"Content-Type":"application/x-www-form-urlencoded"}});
-          if(!res.ok) throw new Error("Overpass " + res.status);
-          const j = await res.json();
-          // An empty answer is treated as a failed attempt — a real search area is never truly empty
-          if((j.elements || []).length === 0){ throw new Error("Empty result" + (j.remark ? " — " + j.remark : "")); }
-          json = j;
-          break outer;
-        }catch(err){ lastErr = err; console.warn("Overpass endpoint failed:", OVERPASS_ENDPOINTS[i], err); }
-      }
+  async function gplaces(url, body, wantToken){
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-FieldMask": wantToken ? FIELD_MASK + ",nextPageToken" : FIELD_MASK
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const txt = await res.text();
+      throw new Error("Google Places " + res.status + ": " + txt.slice(0, 300));
     }
-    if(!json){
-      console.error("All map servers failed:", lastErr);
+    return res.json();
+  }
+
+  // Restaurants via Text Search — pages up to 60 results
+  async function eatSearch(lat, lon, r){
+    let places = [], token = null;
+    for(let page = 0; page < 3; page++){
+      const body = { textQuery: "restaurants", pageSize: 20,
+        locationBias: { circle: { center: {latitude: lat, longitude: lon}, radius: r } } };
+      if(token) body.pageToken = token;
+      const j = await gplaces(PLACES_TEXT, body, true);
+      places = places.concat(j.places || []);
+      token = j.nextPageToken;
+      if(!token) break;
+    }
+    return places;
+  }
+
+  async function runSearch(lat, lon){
+    if(GOOGLE_API_KEY.indexOf("PASTE") === 0){
       setLoading(false);
-      showError("The free map service is busy right now. Wait about 30 seconds and press the search button again — no need to change anything. If it keeps happening, try a smaller radius.");
+      showError("The Google Maps key hasn't been added yet. Open this file and paste your key where it says PASTE_YOUR_GOOGLE_KEY_HERE.");
       return;
     }
-    ingest(json.elements || [], lat, lon);
+    setLoading(true, "Searching Google Maps for real places nearby…");
+    const r = Math.min(+radius.value, 50000);
+    const circle = { circle: { center: {latitude: lat, longitude: lon}, radius: r } };
+    let out = null;
+    try{
+      const [hotelsRes, todoA, todoB, eatPlaces] = await Promise.all([
+        gplaces(PLACES_NEARBY, { includedTypes:["lodging"], maxResultCount:20, locationRestriction: circle }),
+        gplaces(PLACES_NEARBY, { includedTypes: TODO_TYPES_A, maxResultCount:20, locationRestriction: circle }),
+        gplaces(PLACES_NEARBY, { includedTypes: TODO_TYPES_B, maxResultCount:20, locationRestriction: circle }),
+        eatSearch(lat, lon, r)
+      ]);
+      out = {
+        hotels: hotelsRes.places || [],
+        eat: eatPlaces,
+        todo: [...(todoA.places || []), ...(todoB.places || [])]
+      };
+    }catch(err){
+      console.error("Google Places failed:", err);
+      setLoading(false);
+      showError("Google Maps couldn't load places. If this keeps happening, the API key may not be set up for the Places API (New), or its website restrictions don't include this page.");
+      return;
+    }
+    ingest(out, lat, lon);
     setLoading(false);
     tabs.hidden = controls.hidden = legend.hidden = kwRow.hidden = false;
     render();
   }
 
-  function ingest(elements, lat, lon){
+  function ingest(res, lat, lon){
     data = {hotels:[], eat:[], todo:[]};
     const seen = new Set();
-    for(const el of elements){
-      const t = el.tags || {};
-      const name = t.name; if(!name) continue;
-      if(BLOCKED_NAME_RE.test(name)) continue; // hard-blocked — never listed
-      const plat = el.lat ?? el.center?.lat, plon = el.lon ?? el.center?.lon;
-      if(plat == null) continue;
-      const key = name.toLowerCase() + "|" + plat.toFixed(3) + plon.toFixed(3);
-      if(seen.has(key)) continue; seen.add(key);
+    const radM = Math.min(+radius.value, 50000);
+    for(const cat of ["hotels","eat","todo"]){
+      for(const p of res[cat]){
+        const name = p.displayName && p.displayName.text || "";
+        if(!name) continue;
+        if(BLOCKED_NAME_RE.test(name)) continue; // hard-blocked — never listed
+        const plat = p.location && p.location.latitude, plon = p.location && p.location.longitude;
+        if(plat == null) continue;
+        const key = cat + "|" + (p.id || name + plat);
+        if(seen.has(key)) continue; seen.add(key);
+        const typesArr = p.types || [];
+        const types = typesArr.join(",");
+        const distMi = haversineMi(lat, lon, plat, plon);
+        if(distMi * 1609.34 > radM * 1.05) continue; // Text Search can drift past the radius — trim it
 
-      let cat = null, kind = "", lwaEats = false, burgerSpot = false, vegSpot = false;
-      const cuisine = (t.cuisine||"").toLowerCase();
-      if(HOTEL_RE.test(t.tourism||"")){ cat="hotels"; kind = pretty(t.tourism); }
-      else if(EAT_RE.test(t.amenity||"")){
-        if(BAD_CUISINE_RE.test(cuisine)) continue; // fried/processed/dessert-first — not LWA-approved
-        cat="eat"; kind = pretty(t.amenity) + (t.cuisine ? " · " + pretty(t.cuisine.split(";")[0]) : "");
-        lwaEats = GOOD_CUISINE_RE.test(cuisine);
-        burgerSpot = /burger/.test(cuisine);
-        vegSpot = VEG_RE.test(cuisine) || t["diet:vegetarian"]==="only" || t["diet:vegan"]==="only" || VEG_RE.test(name.toLowerCase());
-        if(vegSpot){ lwaEats = false; burgerSpot = false; } // never badge-approved, never gets tips
+        let lwaEats = false, burgerSpot = false, vegSpot = false;
+        if(cat === "eat"){
+          if(BAD_TYPES_RE.test(types + "," + name.toLowerCase().replace(/\s+/g,"_"))) continue; // fried/processed/dessert-first — filtered out (checks the name too)
+          vegSpot = VEG_RE.test(types) || VEG_RE.test(name.toLowerCase());
+          if(!vegSpot){
+            lwaEats = GOOD_CUISINE_RE.test(types);
+            burgerSpot = /hamburger|burger/.test(types + "," + name.toLowerCase());
+          }
+        }
+
+        // Google accessibility fields → same yes/no/unknown scale as before
+        const a = p.accessibilityOptions || {};
+        const wc  = a.wheelchairAccessibleEntrance === true ? "yes" : a.wheelchairAccessibleEntrance === false ? "no" : "";
+        const wcT = a.wheelchairAccessibleRestroom === true ? "yes" : a.wheelchairAccessibleRestroom === false ? "no" : "";
+        const extras = [];
+        if(a.wheelchairAccessibleParking === true) extras.push("Accessible parking");
+        if(a.wheelchairAccessibleSeating === true) extras.push("Accessible seating");
+
+        const famKind = typesArr.some(t => FAMILY_TYPES.has(t));
+        const adult = typesArr.some(t => ADULT_TYPES.has(t));
+        const family = p.goodForChildren === true || (famKind && !adult);
+
+        // Two-tier approval: yellow = verified accessible; green = accessible AND meets LWA standards
+        const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
+        const kind = (p.primaryTypeDisplayName && p.primaryTypeDisplayName.text) || pretty(typesArr[0] || "");
+
+        data[cat].push({
+          cat, family, lwaEats, lwaApproved, burgerSpot, vegSpot,
+          name, kind,
+          lat: plat, lon: plon,
+          distMi,
+          wheelchair: wc,
+          wcToilet: wcT,
+          wcDesc: extras.join(" · "),
+          phone: p.nationalPhoneNumber || "",
+          website: p.websiteUri || "",
+          hours: "",
+          addr: (p.formattedAddress || "").replace(/, (USA|United States)$/, ""),
+          rating: p.rating || 0,
+          ratings: p.userRatingCount || 0
+        });
       }
-      else if(TODO_TOURISM_RE.test(t.tourism||"")){ cat="todo"; kind = pretty(t.tourism); }
-      else if(TODO_AMENITY_RE.test(t.amenity||"")){ cat="todo"; kind = pretty(t.amenity); }
-      else if(TODO_LEISURE_RE.test(t.leisure||"")){ cat="todo"; kind = pretty(t.leisure); }
-      if(!cat) continue;
-
-      const famTag = ["kids_area","family_friendly","highchair","changing_table","playground"]
-        .some(k => (t[k]||"").toLowerCase()==="yes");
-      const famKind = ["leisure","tourism","amenity"].some(k => FAMILY_KIND_RE.test(t[k]||""));
-      const adult = ["amenity","leisure"].some(k => ADULT_RE.test(t[k]||""));
-      const family = famTag || (famKind && !adult);
-
-      // Two-tier approval: yellow = verified accessible; green = accessible AND meets LWA standards
-      const wc = (t.wheelchair||"").toLowerCase();
-      const wcT = (t["toilets:wheelchair"] || t["wheelchair:toilets"] || "").toLowerCase();
-      const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
-
-      data[cat].push({
-        cat, family, lwaEats, lwaApproved, burgerSpot, vegSpot,
-        name, kind,
-        lat:plat, lon:plon,
-        distMi: haversineMi(lat, lon, plat, plon),
-        wheelchair: (t.wheelchair||"").toLowerCase(),
-        wcToilet: (t["toilets:wheelchair"] || t["wheelchair:toilets"] || "").toLowerCase(),
-        wcDesc: t["wheelchair:description"] || "",
-        phone: t.phone || t["contact:phone"] || "",
-        website: t.website || t["contact:website"] || "",
-        hours: t.opening_hours || "",
-        addr: [t["addr:housenumber"], t["addr:street"], t["addr:city"]].filter(Boolean).join(" ")
-      });
     }
     const rank = w => w==="yes"?0 : w==="limited"?1 : (w===""||w==="unknown")?2 : 3;
     for(const k in data) data[k].sort((a,b)=> (a.vegSpot?1:0)-(b.vegSpot?1:0) || (b.lwaApproved?1:0)-(a.lwaApproved?1:0) || rank(a.wheelchair)-rank(b.wheelchair) || (b.lwaEats?1:0)-(a.lwaEats?1:0) || a.distMi-b.distMi);
@@ -374,6 +407,7 @@ out center tags;`;
       card.className = "card";
       const b = badge(p.wheelchair, p.lwaApproved);
       const feats = [];
+      if(p.rating) feats.push("⭐ " + p.rating.toFixed(1) + (p.ratings ? " (" + p.ratings.toLocaleString() + ")" : ""));
       if(p.lwaEats) feats.push("🥩 Feel-good fuel — carnivore/keto-friendly");
       if(p.burgerSpot) feats.push("💡 Carnivore hack: order the patties only — skip the bun");
       if(p.family) feats.push("👨‍👩‍👧 Family friendly");

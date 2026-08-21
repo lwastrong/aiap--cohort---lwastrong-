@@ -8,7 +8,9 @@ Inspired by teammate [Art Thomas](https://lwastrong.com), founder of LWA Strong,
 
 ## What it does
 
-Type any US destination and instantly see nearby places across three categories — **Stay · Eat · Do** — each with real access details pulled live from OpenStreetMap's community-reported data.
+Type any US destination and instantly see nearby places across three categories — **Stay · Eat · Do** — each with real access details, star ratings, and review counts pulled live from Google Maps (Places API).
+
+**Live app:** https://lwastrong.github.io/aiap--cohort---lwastrong-/
 
 - 🟢 **FreeWheelers Approved** — verified wheelchair-accessible AND meets our standards (accessible restroom, or feel-good-fuel menu for restaurants)
 - 🟡 **Access Verified** — verified wheelchair-accessible
@@ -29,11 +31,11 @@ Type any US destination and instantly see nearby places across three categories 
 
 ## How to run it
 
-Download `index.html` (or `FreeWheelers-App.html` — same file) and double-click it. It opens in any browser. No install, no account, no API keys. Internet connection required for live place data.
+Open the live app: **https://lwastrong.github.io/aiap--cohort---lwastrong-/** — no install, no account. (The Google Maps key inside is website-locked, so downloaded copies won't fetch data; use the live link.)
 
 ## Data & honesty
 
-Access details are community-reported via OpenStreetMap and may be incomplete. "Not Verified" does not mean inaccessible — it means nobody has reported it yet. Always confirm directly with the venue. FreeWheelers is an informational tool, not a guarantee of access.
+Access details come from Google Maps and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means Google has no report for it yet. Always confirm directly with the venue. FreeWheelers is an informational tool, not a guarantee of access.
 
 ## Roadmap (from the project brief)
 
@@ -42,7 +44,7 @@ Access details are community-reported via OpenStreetMap and may be incomplete. "
 - Verified access checklist per listing (room dimensions, roll-in showers, staff training)
 - Group trip builder with printable & shareable itineraries
 - Booking handoff to provider flows
-- Google Places data upgrade (richer listings, ratings, photos, hours) once hosted with a restricted API key
+- ~~Google Places data upgrade~~ ✅ Done — live Google Maps data with ratings and accessibility details
 
 ---
 
