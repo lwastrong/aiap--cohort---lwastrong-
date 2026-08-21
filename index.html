@@ -100,6 +100,7 @@
     <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details from live OpenStreetMap data. All that's left to plan is how much fun you're going to have.</p>
     <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
     <p class="hint">🌻 <strong>No seed oils, either.</strong> We believe your brain and nervous system deserve better fuel. Every restaurant card has a Seed Oil Check button — verify what a kitchen cooks with at <a href="https://www.seedoilscout.com/" target="_blank" rel="noopener">Seed Oil Scout</a> before you book the table.</p>
+    <p class="hint">💡 <strong>Carnivore hack:</strong> almost any meat-first spot works if you order right — at a burger place, get the patties only and skip the bun. ⛔ <strong>Hard pass: Chick-fil-A.</strong> The ingredient list doesn't meet our feel-good fuel standards — it will never appear in FreeWheelers results.</p>
   </section>
 
   <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
@@ -176,8 +177,10 @@
   const EAT_RE = /^(restaurant|cafe)$/;
   // LWA nutrition rules: no fast food, nothing fried/processed/dessert-first
   const BAD_CUISINE_RE = /(pizza|fried|friture|fried_chicken|chicken;|^chicken$|donut|doughnut|dessert|ice_cream|cake|bakery|pastry|pancake|waffle|crepe|sandwich|noodle|pasta|ramen|bubble_tea|juice|smoothie|bbq|barbecue)/;
-  // Carnivore/keto-friendly, meat-first styles get the LWA badge (no BBQ — sauces are sugar bombs)
+  // Carnivore/keto-friendly, meat-first styles get the badge (no BBQ — sauces are sugar bombs)
   const GOOD_CUISINE_RE = /(steak|grill|seafood|fish|oyster|brazilian|argentinian|churrasco|korean|kebab|greek|turkish|lebanese|persian|mediterranean|american|burger|brunch|breakfast)/;
+  // Hard-blocked by name: never shown, no matter how it's tagged (doesn't meet feel-good fuel standards)
+  const BLOCKED_NAME_RE = /chick[\s-]?fil[\s-]?a/i;
   const TODO_TOURISM_RE = /^(museum|attraction|gallery|zoo|aquarium|theme_park|viewpoint|artwork)$/;
   const TODO_AMENITY_RE = /^(theatre|cinema|arts_centre|community_centre|library|casino)$/;
   const TODO_LEISURE_RE = /^(park|garden|sports_centre|fitness_centre|swimming_pool|bowling_alley|stadium|nature_reserve|playground|water_park|amusement_arcade|horse_riding|golf_course|miniature_golf|ice_rink|fitness_station)$/;
@@ -286,18 +289,20 @@ out center tags;`;
     for(const el of elements){
       const t = el.tags || {};
       const name = t.name; if(!name) continue;
+      if(BLOCKED_NAME_RE.test(name)) continue; // hard-blocked — never listed
       const plat = el.lat ?? el.center?.lat, plon = el.lon ?? el.center?.lon;
       if(plat == null) continue;
       const key = name.toLowerCase() + "|" + plat.toFixed(3) + plon.toFixed(3);
       if(seen.has(key)) continue; seen.add(key);
 
-      let cat = null, kind = "", lwaEats = false;
+      let cat = null, kind = "", lwaEats = false, burgerSpot = false;
       const cuisine = (t.cuisine||"").toLowerCase();
       if(HOTEL_RE.test(t.tourism||"")){ cat="hotels"; kind = pretty(t.tourism); }
       else if(EAT_RE.test(t.amenity||"")){
         if(BAD_CUISINE_RE.test(cuisine)) continue; // fried/processed/dessert-first — not LWA-approved
         cat="eat"; kind = pretty(t.amenity) + (t.cuisine ? " · " + pretty(t.cuisine.split(";")[0]) : "");
         lwaEats = GOOD_CUISINE_RE.test(cuisine);
+        burgerSpot = /burger/.test(cuisine);
       }
       else if(TODO_TOURISM_RE.test(t.tourism||"")){ cat="todo"; kind = pretty(t.tourism); }
       else if(TODO_AMENITY_RE.test(t.amenity||"")){ cat="todo"; kind = pretty(t.amenity); }
@@ -316,7 +321,7 @@ out center tags;`;
       const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
 
       data[cat].push({
-        cat, family, lwaEats, lwaApproved,
+        cat, family, lwaEats, lwaApproved, burgerSpot,
         name, kind,
         lat:plat, lon:plon,
         distMi: haversineMi(lat, lon, plat, plon),
@@ -363,6 +368,7 @@ out center tags;`;
       const b = badge(p.wheelchair, p.lwaApproved);
       const feats = [];
       if(p.lwaEats) feats.push("🥩 Feel-good fuel — carnivore/keto-friendly");
+      if(p.burgerSpot) feats.push("💡 Carnivore hack: order the patties only — skip the bun");
       if(p.family) feats.push("👨‍👩‍👧 Family friendly");
       if(p.wcToilet==="yes") feats.push("♿ Accessible restroom");
       if(p.wcDesc) feats.push("ℹ️ " + escapeHtml(p.wcDesc));
