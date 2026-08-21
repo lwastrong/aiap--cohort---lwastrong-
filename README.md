@@ -19,6 +19,7 @@ Type any US destination and instantly see nearby places across three categories 
 - Nationwide destination search with 1 / 2 / 5 / 10-mile radius, or use your current location
 - Three result categories: Stay · Eat · Do
 - **Feel-good fuel rules**: fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out; meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best
+- **Seed Oil Check** on every restaurant card — links to [Seed Oil Scout](https://www.seedoilscout.com/) so travelers can verify what a kitchen cooks with before booking a table
 - Kid-friendly filter (real family data: kids areas, high chairs, playgrounds, zoos, parks)
 - Activity search across all categories ("pool", "museum", "gym", "steak"…)
 - 📸 Community Corner — post reviews with photos, no account needed

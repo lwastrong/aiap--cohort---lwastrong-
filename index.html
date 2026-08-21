@@ -99,6 +99,7 @@
     </form>
     <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details from live OpenStreetMap data. All that's left to plan is how much fun you're going to have.</p>
     <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
+    <p class="hint">🌻 <strong>No seed oils, either.</strong> We believe your brain and nervous system deserve better fuel. Every restaurant card has a Seed Oil Check button — verify what a kitchen cooks with at <a href="https://www.seedoilscout.com/" target="_blank" rel="noopener">Seed Oil Scout</a> before you book the table.</p>
   </section>
 
   <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
@@ -315,7 +316,7 @@ out center tags;`;
       const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
 
       data[cat].push({
-        family, lwaEats, lwaApproved,
+        cat, family, lwaEats, lwaApproved,
         name, kind,
         lat:plat, lon:plon,
         distMi: haversineMi(lat, lon, plat, plon),
@@ -375,6 +376,7 @@ out center tags;`;
           '<a href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lon+'" target="_blank" rel="noopener">Directions →</a>' +
           (p.website ? '<a href="'+encodeURI(p.website)+'" target="_blank" rel="noopener">Website</a>' : '') +
           (p.phone ? '<a href="tel:'+p.phone.replace(/[^+\d]/g,"")+'">Call</a>' : '') +
+          (p.cat === "eat" ? '<a href="https://www.seedoilscout.com/" target="_blank" rel="noopener" title="Check this restaurant\'s cooking oils on Seed Oil Scout">🌻 Seed Oil Check</a>' : '') +
         '</div>';
       frag.appendChild(card);
     }
