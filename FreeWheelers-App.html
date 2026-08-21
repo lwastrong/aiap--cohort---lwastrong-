@@ -58,6 +58,8 @@
   .feat span{display:inline-block; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:3px 8px; margin:2px 4px 2px 0;}
   .card .actions{margin-top:auto; padding-top:8px; display:flex; gap:10px; flex-wrap:wrap;}
   .card .actions a{font-weight:700; text-decoration:none; border:2px solid var(--teal); color:var(--teal); padding:8px 12px; border-radius:9px; font-size:.95rem;}
+  .card .actions a.book{background:var(--gold); border-color:var(--gold); color:#fff;}
+  .card .actions a.book:hover{background:var(--gold-dark); border-color:var(--gold-dark);}
   .card .actions a:hover{background:rgba(20,163,163,.08);}
   .empty{padding:40px 10px; text-align:center; color:var(--muted); font-size:1.05rem;}
   .spinner{border:5px solid var(--border); border-top:5px solid var(--gold); border-radius:50%; width:44px; height:44px; margin:30px auto; animation:spin 1s linear infinite;}
@@ -426,6 +428,7 @@
           (p.website ? '<a href="'+encodeURI(p.website)+'" target="_blank" rel="noopener">Website</a>' : '') +
           (p.phone ? '<a href="tel:'+p.phone.replace(/[^+\d]/g,"")+'">Call</a>' : '') +
           (p.cat === "eat" ? '<a href="https://www.seedoilscout.com/" target="_blank" rel="noopener" title="Check this restaurant\'s cooking oils on Seed Oil Scout">🌻 Seed Oil Check</a>' : '') +
+          (p.cat === "hotels" ? '<a class="book" data-hotel="'+escapeHtml(p.name)+'" href="https://www.trivago.com/" target="_blank" rel="noopener" title="Opens Trivago — the hotel name is copied for you, just paste it into Trivago\'s search box">🏨 Book Now</a>' : '') +
         '</div>';
       frag.appendChild(card);
     }
@@ -453,6 +456,16 @@
   }
   function pretty(s){ return s.replace(/_/g," ").replace(/\b\w/g,ch=>ch.toUpperCase()); }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+
+  // Book Now → copy the hotel name so travelers can paste it straight into Trivago's search box
+  results.addEventListener("click", e => {
+    const b = e.target.closest("a.book");
+    if(!b) return;
+    if(navigator.clipboard) navigator.clipboard.writeText(b.dataset.hotel || "").catch(()=>{});
+    const old = b.textContent;
+    b.textContent = "✓ Name copied — paste it in Trivago";
+    setTimeout(()=>{ b.textContent = old; }, 3500);
+  });
 
   // ===== Community Corner (posts stored on this device — no account needed) =====
   const postForm = $("postForm"), postsEl = $("posts");
