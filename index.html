@@ -369,6 +369,7 @@
     setLoading(false);
     tabs.hidden = controls.hidden = legend.hidden = kwRow.hidden = false;
     render();
+    setTimeout(()=>tabs.scrollIntoView({block:"start"}), 50); // bring results into view past the Verified section
   }
 
   function ingest(res, lat, lon){
@@ -500,10 +501,16 @@
   }
   function setLoading(on, msg){
     loading.hidden = !on;
-    if(on){ results.innerHTML=""; empty.hidden=true; loading.querySelector("p").textContent = msg || "Loading…"; }
+    if(on){
+      results.innerHTML=""; empty.hidden=true; loading.querySelector("p").textContent = msg || "Loading…";
+      setTimeout(()=>loading.scrollIntoView({block:"center"}), 50); // keep progress visible below the Verified section
+    }
     goBtn.disabled = on;
   }
-  function showError(msg){ setLoading(false); empty.hidden=false; empty.textContent = msg; }
+  function showError(msg){
+    setLoading(false); empty.hidden=false; empty.textContent = msg;
+    setTimeout(()=>empty.scrollIntoView({block:"center"}), 50); // never let an error hide off-screen
+  }
   function haversineMi(a,b,c,d){
     const R=3958.8, toR=x=>x*Math.PI/180;
     const dLat=toR(c-a), dLon=toR(d-b);
