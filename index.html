@@ -85,7 +85,11 @@
       <div class="search-row">
         <div class="grow">
           <label for="addr">Where are you going?</label>
-          <input type="text" id="addr" placeholder="Anywhere in the US — the coast, the mountains, a lake town, or a big city" autocomplete="street-address" required>
+          <input type="text" id="addr" placeholder="Anywhere in the US — the coast, the mountains, a lake town, or a big city" autocomplete="street-address">
+        </div>
+        <div>
+          <label for="zip">Search for zip code</label>
+          <input type="text" id="zip" placeholder="e.g. 29577" inputmode="numeric" pattern="\d{5}" maxlength="5" style="width:130px" autocomplete="postal-code">
         </div>
         <div>
           <label for="radius">Search radius</label>
@@ -203,15 +207,18 @@
   let origin = null;
 
   const $ = id => document.getElementById(id);
-  const form=$("searchForm"), addr=$("addr"), radius=$("radius"), goBtn=$("goBtn"), locBtn=$("locBtn");
+  const form=$("searchForm"), addr=$("addr"), zip=$("zip"), radius=$("radius"), goBtn=$("goBtn"), locBtn=$("locBtn");
   const tabs=$("tabs"), controls=$("controls"), legend=$("legend"), loading=$("loading"),
         results=$("results"), empty=$("empty"), statusEl=$("status"), onlyAcc=$("onlyAccessible"), onlyFam=$("onlyFamily"),
         kwRow=$("kwRow"), kw=$("kw");
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    const query = addr.value.trim();
-    if(!query) return;
+    const zipVal = zip.value.trim();
+    if(zipVal && !/^\d{5}$/.test(zipVal)){ showError("That zip code doesn't look right — it should be 5 digits, like 29577."); return; }
+    // Use whichever is filled in; both together makes the search even more precise
+    const query = [addr.value.trim(), zipVal ? zipVal + " USA" : ""].filter(Boolean).join(" ");
+    if(!query){ showError("Type a destination or a zip code first."); return; }
     setLoading(true, "Finding that address…");
     try{
       const geo = await geocode(query);
