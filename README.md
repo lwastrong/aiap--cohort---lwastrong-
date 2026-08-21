@@ -42,6 +42,7 @@ Access details are community-reported via OpenStreetMap and may be incomplete. "
 - Verified access checklist per listing (room dimensions, roll-in showers, staff training)
 - Group trip builder with printable & shareable itineraries
 - Booking handoff to provider flows
+- Google Places data upgrade (richer listings, ratings, photos, hours) once hosted with a restricted API key
 
 ---
 
