@@ -3,19 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AccessAbility by LWA — Find Disability-Approved Places</title>
+<title>FreeWheelers — Access Included. Adventure Guaranteed.</title>
 <style>
   :root{
-    --gold:#C8900A; --gold-dark:#A87708; --teal:#14A3A3; --dark:#1A1A1A;
-    --bg:#FFFFFF; --section:#F7F6F3; --card:#FFFFFF; --card2:#F3F1EC; --border:#E5E2DB;
-    --text:#1A1A1A; --muted:#6B6B6B; --green:#2E9E5B; --amber:#D9930D; --red:#C0453A; --grey:#8A867D;
+    --gold:#FF6F61; --gold-dark:#E4574A; --teal:#1B6CA8; --dark:#22303C;
+    --sand:#E9B44C;
+    --bg:#FFF9F2; --section:#FFF1E2; --card:#FFFFFF; --card2:#FFF5E9; --border:#F0DCC3;
+    --text:#22303C; --muted:#6E6660; --green:#2E9E5B; --amber:#D9930D; --red:#C0453A; --grey:#8A867D;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   [hidden]{display:none !important;}
-  body{background:var(--bg); color:var(--text); font-family:'Segoe UI', Arial, Helvetica, sans-serif; font-size:18px; line-height:1.5;}
+  body{background:var(--bg); color:var(--text); font-family:'Arial Rounded MT Bold','Segoe UI', Arial, Helvetica, sans-serif; font-size:18px; line-height:1.5;}
   a{color:var(--gold-dark);}
-  header{background:#fff; border-bottom:3px solid var(--gold); padding:30px 16px 24px; text-align:center;}
-  .logo{font-size:2.3rem; font-weight:900; letter-spacing:.5px; text-transform:uppercase; color:var(--dark);}
+  header{background:#fff; border-bottom:4px solid var(--gold); padding:30px 16px 24px; text-align:center;}
+  .logo{font-size:2.5rem; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--dark);}
   .logo .access{color:var(--gold);}
   .byline{color:var(--muted); font-size:1rem; margin-top:4px;}
   .byline a{color:var(--gold-dark); font-weight:700; text-decoration:none;}
@@ -30,7 +31,7 @@
     border:2px solid var(--border); background:#fff; color:var(--text);
   }
   input[type=text]:focus, select:focus, button:focus{outline:3px solid var(--teal); outline-offset:2px;}
-  button{cursor:pointer; font-size:1.05rem; font-weight:800; border-radius:10px; border:none; padding:14px 22px;}
+  button{cursor:pointer; font-size:1.05rem; font-weight:800; border-radius:999px; border:none; padding:14px 26px;}
   .btn-gold{background:var(--gold); color:#fff; text-transform:uppercase; letter-spacing:.5px;}
   .btn-gold:hover{background:var(--gold-dark);}
   .btn-ghost{background:#fff; color:var(--teal); border:2px solid var(--teal);}
@@ -68,9 +69,9 @@
 </head>
 <body>
 <header>
-  <div class="logo"><span class="access">Access</span>Ability</div>
-  <div class="byline">by <a href="https://lwastrong.com" target="_blank" rel="noopener">LWA — Living With Ataxia</a> · Helping People With ALL Disabilities</div>
-  <div class="tagline">Get Comfortable With Being Uncomfortable — but never with places that shut you out.</div>
+  <div class="logo"><span class="access">Free</span>Wheelers</div>
+  <div class="byline">Inspired by <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas &amp; LWA Strong</a></div>
+  <div class="tagline">Access Included. Adventure Guaranteed.</div>
 </header>
 
 <main>
@@ -79,7 +80,7 @@
       <div class="search-row">
         <div class="grow">
           <label for="addr">Where are you going?</label>
-          <input type="text" id="addr" placeholder="Enter an address, city, or place — e.g. 1600 Pennsylvania Ave, Washington DC" autocomplete="street-address" required>
+          <input type="text" id="addr" placeholder="Anywhere in the US — the coast, the mountains, a lake town, or a big city" autocomplete="street-address" required>
         </div>
         <div>
           <label for="radius">Search radius</label>
@@ -92,23 +93,24 @@
         </div>
       </div>
       <div class="search-row" style="margin-top:14px">
-        <button type="submit" class="btn-gold" id="goBtn">Find Disability-Approved Places</button>
+        <button type="submit" class="btn-gold" id="goBtn">Get Access</button>
         <button type="button" class="btn-ghost" id="locBtn">Use my location</button>
       </div>
     </form>
-    <p class="hint">Live data from OpenStreetMap — including real, community-reported wheelchair accessibility. Always call ahead to confirm.</p>
-    <p class="hint">🥩 <strong>Where to Eat follows LWA nutrition rules:</strong> fast food, fried, dessert-first, and BBQ spots (sugar-loaded sauces) are filtered out. Meat-first places (steakhouse, grill, seafood) are badged LWA-Approved. Nutrition is the foundation — you can't rebuild a nervous system on bad fuel.</p>
+    <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details from live OpenStreetMap data. All that's left to plan is how much fun you're going to have.</p>
+    <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
   </section>
 
   <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
-    <button class="tab" role="tab" aria-selected="true" data-cat="hotels" id="tab-hotels">🏨 Hotels &amp; Stays<span class="count" id="c-hotels"></span></button>
-    <button class="tab" role="tab" aria-selected="false" data-cat="eat" id="tab-eat">🍽️ Where to Eat<span class="count" id="c-eat"></span></button>
-    <button class="tab" role="tab" aria-selected="false" data-cat="todo" id="tab-todo">🎯 Things to Do<span class="count" id="c-todo"></span></button>
+    <button class="tab" role="tab" aria-selected="true" data-cat="hotels" id="tab-hotels">🏨 Stay<span class="count" id="c-hotels"></span></button>
+    <button class="tab" role="tab" aria-selected="false" data-cat="eat" id="tab-eat">🍽️ Eat<span class="count" id="c-eat"></span></button>
+    <button class="tab" role="tab" aria-selected="false" data-cat="todo" id="tab-todo">🎯 Do<span class="count" id="c-todo"></span></button>
   </div>
 
   <div class="controls" id="controls" hidden>
     <div style="display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
-      <label class="toggle"><input type="checkbox" id="onlyAccessible"> Disability-approved only</label>
+      <strong style="color:var(--text)">Your access profile:</strong>
+      <label class="toggle"><input type="checkbox" id="onlyAccessible"> ♿ Access verified only</label>
       <label class="toggle"><input type="checkbox" id="onlyFamily"> 👨‍👩‍👧 Kid-friendly only</label>
     </div>
     <span class="status" id="status"></span>
@@ -120,8 +122,8 @@
 
   <div class="legend" id="legend" hidden>
     <strong style="color:var(--text)">Legend:</strong>
-    <span><span class="badge b-lwa">✓ LWA Approved</span></span>
-    <span><span class="badge b-yes">✓ Disability Approved</span></span>
+    <span><span class="badge b-lwa">✓ FreeWheelers Approved</span></span>
+    <span><span class="badge b-yes">✓ Access Verified</span></span>
     <span><span class="badge b-limited">◐ Partially Accessible</span></span>
     <span><span class="badge b-no">✕ Not Accessible</span></span>
     <span><span class="badge b-unknown">? Not Verified — call ahead</span></span>
@@ -153,9 +155,9 @@
 </main>
 
 <footer>
-  <div class="cta">Living with a neurological disorder? <a href="https://lwastrong.com/contact" target="_blank" rel="noopener">Book a FREE 30-minute Zoom consultation with LWA →</a></div>
-  <div>LWA — Living With Ataxia · <a href="https://lwastrong.com" target="_blank" rel="noopener">lwastrong.com</a> · <a href="https://www.youtube.com/@LWAstrong" target="_blank" rel="noopener">YouTube @LWAstrong</a> · INDEPENDENCE GUARANTEED!</div>
-  <p class="disclaimer">Accessibility data is community-reported via OpenStreetMap and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means nobody has reported it yet. Always confirm directly with the venue before visiting. AccessAbility by LWA is an informational tool, not a guarantee of access.</p>
+  <div class="cta" style="font-size:1.1rem"><strong>Your next trip is waiting.</strong> Pick a destination, get access, go. Five minutes, tops.</div>
+  <div>FreeWheelers · Inspired by <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas &amp; LWA Strong</a> · Access Included. Adventure Guaranteed.</div>
+  <p class="disclaimer">Access details are community-reported via OpenStreetMap and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means nobody has reported it yet. Always confirm directly with the venue before visiting. FreeWheelers is an informational tool, not a guarantee of access.</p>
 </footer>
 
 <script>
@@ -343,7 +345,7 @@ out center tags;`;
     const approved = list.filter(p=>p.wheelchair==="yes").length;
     const lwaCount = list.filter(p=>p.lwaApproved).length;
     const fam = list.filter(p=>p.family).length;
-    statusEl.textContent = list.length + " place" + (list.length===1?"":"s") + (q ? " match \"" + kw.value.trim() + "\" (all categories)" : " shown") + " · " + lwaCount + " LWA approved · " + approved + " disability approved · " + fam + " kid-friendly";
+    statusEl.textContent = list.length + " place" + (list.length===1?"":"s") + (q ? " match \"" + kw.value.trim() + "\" (all categories)" : " shown") + " · " + lwaCount + " FreeWheelers approved · " + approved + " access verified · " + fam + " kid-friendly";
     results.innerHTML = "";
     empty.hidden = true;
     if(!list.length){
@@ -359,7 +361,7 @@ out center tags;`;
       card.className = "card";
       const b = badge(p.wheelchair, p.lwaApproved);
       const feats = [];
-      if(p.lwaEats) feats.push("🥩 LWA-Approved — carnivore/keto-friendly");
+      if(p.lwaEats) feats.push("🥩 Feel-good fuel — carnivore/keto-friendly");
       if(p.family) feats.push("👨‍👩‍👧 Family friendly");
       if(p.wcToilet==="yes") feats.push("♿ Accessible restroom");
       if(p.wcDesc) feats.push("ℹ️ " + escapeHtml(p.wcDesc));
@@ -380,8 +382,8 @@ out center tags;`;
   }
 
   function badge(w, lwa){
-    if(lwa) return {cls:"b-lwa", label:"✓ LWA Approved"};
-    if(w==="yes") return {cls:"b-yes", label:"✓ Disability Approved"};
+    if(lwa) return {cls:"b-lwa", label:"✓ FreeWheelers Approved"};
+    if(w==="yes") return {cls:"b-yes", label:"✓ Access Verified"};
     if(w==="limited") return {cls:"b-limited", label:"◐ Partially Accessible"};
     if(w==="no") return {cls:"b-no", label:"✕ Not Accessible"};
     return {cls:"b-unknown", label:"? Not Verified — call ahead"};
