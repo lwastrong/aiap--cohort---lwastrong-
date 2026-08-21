@@ -429,7 +429,7 @@
           (p.phone ? '<a href="tel:'+p.phone.replace(/[^+\d]/g,"")+'">📞 Call Now</a>' : '') +
           (p.cat === "eat" ? '<a class="book" href="https://www.opentable.com/s?term='+encodeURIComponent(p.name)+'&latitude='+p.lat+'&longitude='+p.lon+'&covers=2" target="_blank" rel="noopener" title="Find this restaurant on OpenTable and book a table">🍽️ Book Reservation</a>' : '') +
           (p.cat === "eat" ? '<a href="https://www.seedoilscout.com/" target="_blank" rel="noopener" title="Check this restaurant\'s cooking oils on Seed Oil Scout">🌻 Seed Oil Check</a>' : '') +
-          (p.cat === "hotels" ? '<a class="book" data-hotel="'+escapeHtml(p.name)+'" href="https://www.trivago.com/" target="_blank" rel="noopener" title="Opens Trivago — the hotel name is copied for you, just paste it into Trivago\'s search box">🏨 Book Now</a>' : '') +
+          (p.cat === "hotels" ? '<a class="book" href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(p.name + " " + ((p.addr.split(",")[1]||"").trim()))+'" target="_blank" rel="noopener" title="Book this hotel on Booking.com">🏨 Book Now</a>' : '') +
         '</div>';
       frag.appendChild(card);
     }
@@ -458,15 +458,7 @@
   function pretty(s){ return s.replace(/_/g," ").replace(/\b\w/g,ch=>ch.toUpperCase()); }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 
-  // Book Now → copy the hotel name so travelers can paste it straight into Trivago's search box
-  results.addEventListener("click", e => {
-    const b = e.target.closest("a.book");
-    if(!b || !b.dataset.hotel) return; // hotels only — restaurant reservations deep-link straight to OpenTable
-    if(navigator.clipboard) navigator.clipboard.writeText(b.dataset.hotel || "").catch(()=>{});
-    const old = b.textContent;
-    b.textContent = "✓ Name copied — paste it in Trivago";
-    setTimeout(()=>{ b.textContent = old; }, 3500);
-  });
+  // Book Now (hotels) and Book Reservation (restaurants) deep-link straight to Booking.com / OpenTable
 
   // ===== Community Corner (posts stored on this device — no account needed) =====
   const postForm = $("postForm"), postsEl = $("posts");
