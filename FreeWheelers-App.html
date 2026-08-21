@@ -55,6 +55,12 @@
   .feat{font-size:.92rem; color:var(--text);}
   .crit{background:#FDE8E8; border:2px solid var(--red); border-radius:10px; padding:8px 10px; font-size:.92rem; color:#8A1C1C; font-weight:600;}
   .crit .crit-head{display:block; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;}
+  .vgrid{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:16px; margin:14px 0;}
+  .vgrid > div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .vhead{font-size:1.02rem; margin-bottom:8px; color:var(--dark);}
+  .vlist{list-style:none; padding:0; margin:0;}
+  .vlist li{padding:4px 0 4px 26px; position:relative; font-size:.95rem;}
+  .vlist li::before{content:"✓"; position:absolute; left:0; color:var(--green); font-weight:900;}
   .feat span{display:inline-block; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:3px 8px; margin:2px 4px 2px 0;}
   .card .actions{margin-top:auto; padding-top:8px; display:flex; gap:10px; flex-wrap:wrap;}
   .card .actions a{font-weight:700; text-decoration:none; border:2px solid var(--teal); color:var(--teal); padding:8px 12px; border-radius:9px; font-size:.95rem;}
@@ -113,6 +119,45 @@
     <p class="hint">⛔ <strong>Vegetarian restaurants — not recommended.</strong> Plant-based menus are loaded with oxalates, compounds linked to kidney stones, and we believe a plant-heavy diet is inflammatory and works against the brain and nervous system (see Dr. Anthony Chaffee's research library at <a href="https://www.dranthonychaffee.com/resources" target="_blank" rel="noopener">dranthonychaffee.com</a>). They stay in the list so you can see access details — but each one carries a critical Not Recommended warning.</p>
   </section>
 
+  <section class="panel" id="verified" style="margin-top:24px" aria-label="The FreeWheelers Verified Checklist">
+    <h2 style="margin-bottom:6px">✅ FreeWheelers Verified — access you can actually trust</h2>
+    <p class="hint" style="margin-top:0"><strong>Other apps show you a wheelchair icon someone clicked once.</strong> We hold every place to a real standard — built from the same mobility checklist that took our founder, <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas of LWA Strong</a>, from a wheelchair every neurologist called permanent to walking, driving, and traveling on his own.</p>
+    <div class="vgrid">
+      <div>
+        <h3 class="vhead">🚪 Getting in</h3>
+        <ul class="vlist">
+          <li>Step-free entrance or a real ramp — not "just one small step"</li>
+          <li>Doorways wide enough for every chair (32″+)</li>
+          <li>Accessible parking or a safe drop-off at the door</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🧭 Getting around</h3>
+        <ul class="vlist">
+          <li>Wheelchair-accessible restroom</li>
+          <li>Clear paths inside — no squeezing between tables</li>
+          <li>Accessible seating and table height</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🛏️ Staying over (hotels)</h3>
+        <ul class="vlist">
+          <li>Roll-in shower or grab bars that hold real weight</li>
+          <li>Transfer-friendly bed height</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🤝 The human part</h3>
+        <ul class="vlist">
+          <li>Staff who help without being asked twice</li>
+          <li>Feel-good fuel on the menu (restaurants) — meat-first options that support recovery</li>
+        </ul>
+      </div>
+    </div>
+    <p class="hint"><strong>How the badge works today:</strong> a green <span class="badge b-lwa" style="font-size:.8rem">✓ FreeWheelers Approved</span> means live Google Maps data confirms an accessible entrance <em>plus</em> an accessible restroom (or a feel-good-fuel menu for restaurants). <strong>Where we're headed:</strong> full 10-point on-site verification with partner venues — so the badge means someone who lives this checked it in person.</p>
+    <p class="hint">🏨 <strong>Run a hotel, restaurant, or attraction?</strong> Get on the list — <a href="mailto:art@lwastrong.com?subject=FreeWheelers%20Verified%20request">request FreeWheelers verification</a>.</p>
+  </section>
+
   <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
     <button class="tab" role="tab" aria-selected="true" data-cat="hotels" id="tab-hotels">🏨 Stay<span class="count" id="c-hotels"></span></button>
     <button class="tab" role="tab" aria-selected="false" data-cat="eat" id="tab-eat">🍽️ Eat<span class="count" id="c-eat"></span></button>
@@ -134,7 +179,7 @@
 
   <div class="legend" id="legend" hidden>
     <strong style="color:var(--text)">Legend:</strong>
-    <span><span class="badge b-lwa">✓ FreeWheelers Approved</span></span>
+    <span><a href="#verified" style="text-decoration:none" title="See the FreeWheelers Verified checklist"><span class="badge b-lwa">✓ FreeWheelers Approved</span></a> <a href="#verified" style="font-size:.85rem">what does this mean?</a></span>
     <span><span class="badge b-yes">✓ Access Verified</span></span>
     <span><span class="badge b-limited">◐ Partially Accessible</span></span>
     <span><span class="badge b-no">✕ Not Accessible</span></span>

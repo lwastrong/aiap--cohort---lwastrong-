@@ -16,6 +16,10 @@ Type any destination in the world — US searched first — and instantly see ne
 - 🟡 **Access Verified** — verified wheelchair-accessible
 - 🟠 **Partially Accessible** · 🔴 **Not Accessible** · ⚪ **Not Verified — call ahead**
 
+## The FreeWheelers Verified Checklist
+
+Our differentiator: other apps show a wheelchair icon someone clicked once. FreeWheelers holds every place to a 10-point standard — step-free entry, doorway width, accessible restroom, clear paths, roll-in showers, transfer-friendly beds, trained staff, and feel-good fuel on the menu — built from the same mobility checklist behind founder Art Thomas's wheelchair-to-independence recovery. Today the green badge is powered by live Google Maps accessibility data; the roadmap is full on-site verification with partner venues (a future revenue stream: venues request and fund their own certification).
+
 ## Features
 
 - Worldwide destination search (US prioritized) with zip code option, 1 / 2 / 5 / 10-mile radius, or use your current location
