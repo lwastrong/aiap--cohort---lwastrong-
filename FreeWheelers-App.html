@@ -52,6 +52,8 @@
   .b-lwa{background:var(--green);} .b-yes{background:#E3B505; color:#1A1A1A;} .b-limited{background:var(--amber);} .b-no{background:var(--red);} .b-unknown{background:var(--grey);}
   .meta{color:var(--muted); font-size:.95rem;}
   .feat{font-size:.92rem; color:var(--text);}
+  .crit{background:#FDE8E8; border:2px solid var(--red); border-radius:10px; padding:8px 10px; font-size:.92rem; color:#8A1C1C; font-weight:600;}
+  .crit .crit-head{display:block; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;}
   .feat span{display:inline-block; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:3px 8px; margin:2px 4px 2px 0;}
   .card .actions{margin-top:auto; padding-top:8px; display:flex; gap:10px; flex-wrap:wrap;}
   .card .actions a{font-weight:700; text-decoration:none; border:2px solid var(--teal); color:var(--teal); padding:8px 12px; border-radius:9px; font-size:.95rem;}
@@ -101,6 +103,7 @@
     <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
     <p class="hint">🌻 <strong>No seed oils, either.</strong> We believe your brain and nervous system deserve better fuel. Every restaurant card has a Seed Oil Check button — verify what a kitchen cooks with at <a href="https://www.seedoilscout.com/" target="_blank" rel="noopener">Seed Oil Scout</a> before you book the table.</p>
     <p class="hint">💡 <strong>Carnivore hack:</strong> almost any meat-first spot works if you order right — at a burger place, get the patties only and skip the bun. ⛔ <strong>Hard pass: Chick-fil-A.</strong> The ingredient list doesn't meet our feel-good fuel standards — it will never appear in FreeWheelers results.</p>
+    <p class="hint">⛔ <strong>Vegetarian restaurants — not recommended.</strong> Plant-based menus are loaded with oxalates, compounds linked to kidney stones, and we believe a plant-heavy diet is inflammatory and works against the brain and nervous system (see Dr. Anthony Chaffee's research library at <a href="https://www.dranthonychaffee.com/resources" target="_blank" rel="noopener">dranthonychaffee.com</a>). They stay in the list so you can see access details — but each one carries a critical Not Recommended warning.</p>
   </section>
 
   <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
@@ -181,6 +184,8 @@
   const GOOD_CUISINE_RE = /(steak|grill|seafood|fish|oyster|brazilian|argentinian|churrasco|korean|kebab|greek|turkish|lebanese|persian|mediterranean|american|burger|brunch|breakfast)/;
   // Hard-blocked by name: never shown, no matter how it's tagged (doesn't meet feel-good fuel standards)
   const BLOCKED_NAME_RE = /chick[\s-]?fil[\s-]?a/i;
+  // Vegetarian/vegan restaurants: kept in the list but marked CRITICAL — NOT RECOMMENDED
+  const VEG_RE = /(vegetarian|vegan)/;
   const TODO_TOURISM_RE = /^(museum|attraction|gallery|zoo|aquarium|theme_park|viewpoint|artwork)$/;
   const TODO_AMENITY_RE = /^(theatre|cinema|arts_centre|community_centre|library|casino)$/;
   const TODO_LEISURE_RE = /^(park|garden|sports_centre|fitness_centre|swimming_pool|bowling_alley|stadium|nature_reserve|playground|water_park|amusement_arcade|horse_riding|golf_course|miniature_golf|ice_rink|fitness_station)$/;
@@ -295,7 +300,7 @@ out center tags;`;
       const key = name.toLowerCase() + "|" + plat.toFixed(3) + plon.toFixed(3);
       if(seen.has(key)) continue; seen.add(key);
 
-      let cat = null, kind = "", lwaEats = false, burgerSpot = false;
+      let cat = null, kind = "", lwaEats = false, burgerSpot = false, vegSpot = false;
       const cuisine = (t.cuisine||"").toLowerCase();
       if(HOTEL_RE.test(t.tourism||"")){ cat="hotels"; kind = pretty(t.tourism); }
       else if(EAT_RE.test(t.amenity||"")){
@@ -303,6 +308,8 @@ out center tags;`;
         cat="eat"; kind = pretty(t.amenity) + (t.cuisine ? " · " + pretty(t.cuisine.split(";")[0]) : "");
         lwaEats = GOOD_CUISINE_RE.test(cuisine);
         burgerSpot = /burger/.test(cuisine);
+        vegSpot = VEG_RE.test(cuisine) || t["diet:vegetarian"]==="only" || t["diet:vegan"]==="only" || VEG_RE.test(name.toLowerCase());
+        if(vegSpot){ lwaEats = false; burgerSpot = false; } // never badge-approved, never gets tips
       }
       else if(TODO_TOURISM_RE.test(t.tourism||"")){ cat="todo"; kind = pretty(t.tourism); }
       else if(TODO_AMENITY_RE.test(t.amenity||"")){ cat="todo"; kind = pretty(t.amenity); }
@@ -321,7 +328,7 @@ out center tags;`;
       const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
 
       data[cat].push({
-        cat, family, lwaEats, lwaApproved, burgerSpot,
+        cat, family, lwaEats, lwaApproved, burgerSpot, vegSpot,
         name, kind,
         lat:plat, lon:plon,
         distMi: haversineMi(lat, lon, plat, plon),
@@ -335,7 +342,7 @@ out center tags;`;
       });
     }
     const rank = w => w==="yes"?0 : w==="limited"?1 : (w===""||w==="unknown")?2 : 3;
-    for(const k in data) data[k].sort((a,b)=> (b.lwaApproved?1:0)-(a.lwaApproved?1:0) || rank(a.wheelchair)-rank(b.wheelchair) || (b.lwaEats?1:0)-(a.lwaEats?1:0) || a.distMi-b.distMi);
+    for(const k in data) data[k].sort((a,b)=> (a.vegSpot?1:0)-(b.vegSpot?1:0) || (b.lwaApproved?1:0)-(a.lwaApproved?1:0) || rank(a.wheelchair)-rank(b.wheelchair) || (b.lwaEats?1:0)-(a.lwaEats?1:0) || a.distMi-b.distMi);
     $("c-hotels").textContent = "(" + data.hotels.length + ")";
     $("c-eat").textContent = "(" + data.eat.length + ")";
     $("c-todo").textContent = "(" + data.todo.length + ")";
@@ -378,6 +385,7 @@ out center tags;`;
         '<h3>'+escapeHtml(p.name)+'</h3>' +
         '<div class="meta">'+escapeHtml(p.kind)+' · '+p.distMi.toFixed(1)+' mi away'+(p.addr? ' · '+escapeHtml(p.addr):'')+'</div>' +
         (feats.length ? '<div class="feat">'+feats.map(f=>'<span>'+f+'</span>').join('')+'</div>' : '') +
+        (p.vegSpot ? '<div class="crit"><span class="crit-head">⛔ Critical — Not Recommended</span>Vegetarian restaurant. Plant-based menus are loaded with oxalates — compounds linked to kidney stones — and we believe a plant-heavy diet works against the brain and nervous system. Listed for access info only.</div>' : '') +
         '<div class="actions">' +
           '<a href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lon+'" target="_blank" rel="noopener">Directions →</a>' +
           (p.website ? '<a href="'+encodeURI(p.website)+'" target="_blank" rel="noopener">Website</a>' : '') +

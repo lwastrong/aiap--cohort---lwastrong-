@@ -20,6 +20,7 @@ Type any US destination and instantly see nearby places across three categories 
 - Three result categories: Stay · Eat · Do
 - **Feel-good fuel rules**: fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out; meat-first spots (steakhouse, grill, seafood, burgers) get the badge — food that keeps everyone feeling their best
 - **Carnivore hack tips**: burger spots get an on-card tip — order the patties only, skip the bun. Chick-fil-A is hard-blocked by name and will never appear in results (doesn't meet our feel-good fuel standards)
+- **Vegetarian restaurants stay listed but carry a critical ⛔ Not Recommended warning** (oxalates linked to kidney stones; plant-heavy diets don't meet our brain-and-nervous-system fuel standards) and sort to the bottom
 - **Seed Oil Check** on every restaurant card — links to [Seed Oil Scout](https://www.seedoilscout.com/) so travelers can verify what a kitchen cooks with before booking a table
 - Kid-friendly filter (real family data: kids areas, high chairs, playgrounds, zoos, parks)
 - Activity search across all categories ("pool", "museum", "gym", "steak"…)
