@@ -52,6 +52,7 @@
   .badge{display:inline-block; padding:5px 12px; border-radius:999px; font-weight:800; font-size:.85rem; color:#fff; width:fit-content;}
   .b-lwa{background:var(--green);} .b-yes{background:#E3B505; color:#1A1A1A;} .b-limited{background:var(--amber);} .b-no{background:var(--red);} .b-unknown{background:var(--grey);}
   .meta{color:var(--muted); font-size:.95rem;}
+  .cphoto{width:100%; height:160px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin-bottom:4px;}
   .feat{font-size:.92rem; color:var(--text);}
   .crit{background:#FDE8E8; border:2px solid var(--red); border-radius:10px; padding:8px 10px; font-size:.92rem; color:#8A1C1C; font-weight:600;}
   .crit .crit-head{display:block; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;}
@@ -231,7 +232,7 @@
     "places.id","places.displayName","places.types","places.primaryTypeDisplayName",
     "places.location","places.formattedAddress","places.nationalPhoneNumber",
     "places.websiteUri","places.accessibilityOptions","places.goodForChildren",
-    "places.rating","places.userRatingCount"
+    "places.rating","places.userRatingCount","places.photos"
   ].join(",");
   const TODO_TYPES_A = ["tourist_attraction","museum","art_gallery","movie_theater","performing_arts_theater","library","community_center","casino"];
   const TODO_TYPES_B = ["park","zoo","aquarium","amusement_park","national_park","hiking_area","gym","golf_course","bowling_alley"];
@@ -429,7 +430,8 @@
           hours: "",
           addr: (p.formattedAddress || "").replace(/, (USA|United States)$/, ""),
           rating: p.rating || 0,
-          ratings: p.userRatingCount || 0
+          ratings: p.userRatingCount || 0,
+          photo: (p.photos && p.photos[0] && p.photos[0].name) || ""
         });
       }
     }
@@ -461,7 +463,9 @@
       return;
     }
     const frag = document.createDocumentFragment();
+    let cardNo = 0;
     for(const p of list.slice(0,300)){
+      cardNo++;
       const card = document.createElement("article");
       card.className = "card";
       const b = badge(p.wheelchair, p.lwaApproved);
@@ -474,6 +478,7 @@
       if(p.wcDesc) feats.push("ℹ️ " + escapeHtml(p.wcDesc));
       if(p.hours) feats.push("🕒 " + escapeHtml(p.hours));
       card.innerHTML =
+        (p.photo ? '<img class="cphoto" loading="'+(cardNo <= 6 ? 'eager' : 'lazy')+'" alt="Photo of '+escapeHtml(p.name)+'" src="https://places.googleapis.com/v1/'+p.photo+'/media?maxWidthPx=520&key='+GOOGLE_API_KEY+'" onerror="this.remove()">' : '') +
         '<span class="badge '+b.cls+'">'+b.label+'</span>' +
         '<h3>'+escapeHtml(p.name)+'</h3>' +
         '<div class="meta">'+escapeHtml(p.kind)+' · '+p.distMi.toFixed(1)+' mi away'+(p.addr? ' · '+escapeHtml(p.addr):'')+'</div>' +
