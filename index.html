@@ -456,17 +456,17 @@
 
 <script>
   var venues = [
-    {name:"The Cedar Room", type:"Eat", cat:"eat", meat:true, stars:"★★★★★", rating:"4.6", approved:true,
+    {photo:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=60&auto=format&fit=crop", name:"The Cedar Room", type:"Eat", cat:"eat", meat:true, stars:"★★★★★", rating:"4.6", approved:true,
      chips:["Step-free entrance","Accessible restroom","Accessible parking"], note:""},
-    {name:"Harborview Hotel", type:"Stay", cat:"stay", meat:false, stars:"★★★★★", rating:"4.7", approved:true,
+    {photo:"https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=60&auto=format&fit=crop", name:"Harborview Hotel", type:"Stay", cat:"stay", meat:false, stars:"★★★★★", rating:"4.7", approved:true,
      chips:["Roll-in shower","Step-free lobby","Accessible parking"], note:""},
-    {name:"Riverside Park Trail", type:"Play", cat:"play", meat:false, stars:"★★★★★", rating:"4.8", approved:true,
+    {photo:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=60&auto=format&fit=crop", name:"Riverside Park Trail", type:"Play", cat:"play", meat:false, stars:"★★★★★", rating:"4.8", approved:true,
      chips:["Paved, level path","Accessible restroom","Drop-off at entrance"], note:""},
-    {name:"Nonna's Kitchen", type:"Eat", cat:"eat", meat:false, stars:"★★★★☆", rating:"4.4", approved:true,
+    {photo:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=60&auto=format&fit=crop", name:"Nonna's Kitchen", type:"Eat", cat:"eat", meat:false, stars:"★★★★☆", rating:"4.4", approved:true,
      chips:["Ramped entrance","Accessible restroom"], note:""},
-    {name:"Firepit Grill &amp; Smokehouse", type:"Eat", cat:"eat", meat:true, stars:"★★★★★", rating:"4.7", approved:true,
+    {photo:"https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=60&auto=format&fit=crop", name:"Firepit Grill &amp; Smokehouse", type:"Eat", cat:"eat", meat:true, stars:"★★★★★", rating:"4.7", approved:true,
      chips:["Step-free entrance","Accessible restroom","Wide aisles"], note:""},
-    {name:"Maya's Corner Cafe", type:"Eat", cat:"eat", meat:false, stars:"★★★★☆", rating:"4.3", approved:false,
+    {photo:"https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=60&auto=format&fit=crop", name:"Maya's Corner Cafe", type:"Eat", cat:"eat", meat:false, stars:"★★★★☆", rating:"4.3", approved:false,
      chips:["Map shows step-free entrance"], note:"Restroom access not reported yet. Confirm with the cafe before you go."}
   ];
 
@@ -493,7 +493,7 @@
       card.className = 'venue';
       card.style.animationDelay = (i*0.06)+'s';
       card.innerHTML =
-        '<div class="top '+v.cat+'"><span class="type">'+v.type+'</span>'+stamp+'</div>'+
+        '<div class="top '+v.cat+'" style="background-image:url('+v.photo+'); background-size:cover; background-position:center"><span class="type">'+v.type+'</span>'+stamp+'</div>'+
         '<div class="body">'+
           '<h3>'+v.name+'</h3>'+
           '<div class="rating"><span class="stars">'+v.stars+'</span> '+v.rating+' on Google</div>'+
@@ -520,18 +520,22 @@
       document.getElementById('zip').focus();
       return;
     }
+    var rMap = {'1':'1600','2':'3200','5':'8000','10':'16000'};
+    var r = rMap[document.getElementById('radius').value] || '3200';
     searchMsg.style.color = 'var(--go)';
-    searchMsg.textContent = 'Found accessible places near ' + zip + '. See the sample results below.';
-    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+    searchMsg.textContent = 'Opening the app with real places near ' + zip + '…';
+    location.href = 'app.html?q=' + encodeURIComponent(zip) + '&r=' + r;
   });
   document.getElementById('zip').addEventListener('keydown', function(e){
     if(e.key === 'Enter'){ searchBtn.click(); }
   });
 
   document.getElementById('locBtn').addEventListener('click', function(){
+    var rMap = {'1':'1600','2':'3200','5':'8000','10':'16000'};
+    var r = rMap[document.getElementById('radius').value] || '3200';
     searchMsg.style.color = 'var(--go)';
-    searchMsg.textContent = 'Using your location to find accessible places nearby. See the sample results below.';
-    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+    searchMsg.textContent = 'Opening the app to use your location…';
+    location.href = 'app.html?loc=1&r=' + r;
   });
 
   // Community demo

@@ -631,6 +631,20 @@
     if(savePosts(list)){ postForm.reset(); renderPosts(); }
   });
   renderPosts();
+
+  // Arriving from the landing page? Run the search they asked for automatically.
+  (function(){
+    const params = new URLSearchParams(location.search);
+    const q = (params.get("q") || "").trim();
+    const r = params.get("r") || "";
+    if(["1600","3200","8000","16000"].includes(r)) radius.value = r;
+    if(q){
+      if(/^\d{5}$/.test(q)) zip.value = q; else addr.value = q;
+      form.requestSubmit();
+    } else if(params.get("loc") === "1"){
+      locBtn.click();
+    }
+  })();
 })();
 </script>
 </body>
