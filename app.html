@@ -52,8 +52,9 @@
   .badge{display:inline-block; padding:5px 12px; border-radius:999px; font-weight:800; font-size:.85rem; color:#fff; width:fit-content;}
   .b-lwa{background:var(--green);} .b-yes{background:#E3B505; color:#1A1A1A;} .b-limited{background:var(--amber);} .b-no{background:var(--red);} .b-unknown{background:var(--grey);}
   .meta{color:var(--muted); font-size:.95rem;}
-  .cphoto{width:100%; height:160px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin-bottom:4px; cursor:pointer; transition:opacity .15s;}
-  .cphoto:hover{opacity:.85;}
+  .cphoto-link{display:block; overflow:hidden; border-radius:10px; border:1px solid var(--border); margin-bottom:4px;}
+  .cphoto{width:100%; height:160px; object-fit:cover; display:block; cursor:pointer; transition:transform .3s ease;}
+  .cphoto-link:hover .cphoto, .cphoto-link:focus .cphoto{transform:scale(1.07);}
   .feat{font-size:.92rem; color:var(--text);}
   .crit{background:#FDE8E8; border:2px solid var(--red); border-radius:10px; padding:8px 10px; font-size:.92rem; color:#8A1C1C; font-weight:600;}
   .crit .crit-head{display:block; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;}
@@ -480,7 +481,7 @@
       if(p.wcDesc) feats.push("ℹ️ " + escapeHtml(p.wcDesc));
       if(p.hours) feats.push("🕒 " + escapeHtml(p.hours));
       card.innerHTML =
-        (p.photo ? '<a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+encodeURIComponent(p.placeId)+'" target="_blank" rel="noopener" title="See more photos, reviews, and street view on Google Maps"><img class="cphoto" loading="'+(cardNo <= 6 ? 'eager' : 'lazy')+'" alt="Photo of '+escapeHtml(p.name)+' — opens Google Maps" src="https://places.googleapis.com/v1/'+p.photo+'/media?maxWidthPx=520&key='+GOOGLE_API_KEY+'" onerror="this.parentElement.remove()"></a>' : '') +
+        (p.photo ? '<a class="cphoto-link" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name)+'&query_place_id='+encodeURIComponent(p.placeId)+'" target="_blank" rel="noopener" title="See more photos, reviews, and street view on Google Maps"><img class="cphoto" loading="'+(cardNo <= 6 ? 'eager' : 'lazy')+'" alt="Photo of '+escapeHtml(p.name)+' — opens Google Maps" src="https://places.googleapis.com/v1/'+p.photo+'/media?maxWidthPx=520&key='+GOOGLE_API_KEY+'" onerror="this.parentElement.remove()"></a>' : '') +
         '<span class="badge '+b.cls+'">'+b.label+'</span>' +
         '<h3>'+escapeHtml(p.name)+'</h3>' +
         '<div class="meta">'+escapeHtml(p.kind)+' · '+p.distMi.toFixed(1)+' mi away'+(p.addr? ' · '+escapeHtml(p.addr):'')+'</div>' +
