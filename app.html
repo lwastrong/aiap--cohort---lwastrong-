@@ -52,6 +52,10 @@
   .badge{display:inline-block; padding:5px 12px; border-radius:999px; font-weight:800; font-size:.85rem; color:#fff; width:fit-content;}
   .b-lwa{background:var(--green);} .b-yes{background:#E3B505; color:#1A1A1A;} .b-limited{background:var(--amber);} .b-no{background:var(--red);} .b-unknown{background:var(--grey);}
   .meta{color:var(--muted); font-size:.95rem;}
+  .lbtn{background:none; border:none; padding:0; cursor:pointer; border-radius:999px;}
+  .lbtn .badge{transition:transform .15s;}
+  .lbtn:hover .badge{transform:scale(1.06);}
+  .lbtn.active .badge{outline:3px solid var(--dark); outline-offset:1px;}
   .cphoto-link{display:block; overflow:hidden; border-radius:10px; border:1px solid var(--border); margin-bottom:4px;}
   .cphoto{width:100%; height:160px; object-fit:cover; display:block; cursor:pointer; transition:transform .3s ease;}
   .cphoto-link:hover .cphoto, .cphoto-link:focus .cphoto{transform:scale(1.07);}
@@ -181,12 +185,12 @@
   </div>
 
   <div class="legend" id="legend" hidden>
-    <strong style="color:var(--text)">Legend:</strong>
-    <span><a href="#verified" style="text-decoration:none" title="See the FreeWheelers Verified checklist"><span class="badge b-lwa">✓ FreeWheelers Approved</span></a> <a href="#verified" style="font-size:.85rem">what does this mean?</a></span>
-    <span><span class="badge b-yes">✓ Access Verified</span></span>
-    <span><span class="badge b-limited">◐ Partially Accessible</span></span>
-    <span><span class="badge b-no">✕ Not Accessible</span></span>
-    <span><span class="badge b-unknown">? Not Verified — call ahead</span></span>
+    <strong style="color:var(--text)">Legend (click to filter):</strong>
+    <span><button type="button" class="lbtn" data-f="lwa" title="Show only FreeWheelers Approved places"><span class="badge b-lwa">✓ FreeWheelers Approved</span></button> <a href="#verified" style="font-size:.85rem">what does this mean?</a></span>
+    <span><button type="button" class="lbtn" data-f="yes" title="Show only Access Verified places"><span class="badge b-yes">✓ Access Verified</span></button></span>
+    <span><button type="button" class="lbtn" data-f="limited" title="Show only Partially Accessible places"><span class="badge b-limited">◐ Partially Accessible</span></button></span>
+    <span><button type="button" class="lbtn" data-f="no" title="Show only places reported Not Accessible"><span class="badge b-no">✕ Not Accessible</span></button></span>
+    <span><button type="button" class="lbtn" data-f="unknown" title="Show only places with no access report yet"><span class="badge b-unknown">? Not Verified — call ahead</span></button></span>
   </div>
 
   <div id="loading" hidden><div class="spinner" role="status" aria-label="Loading"></div><p style="text-align:center;color:var(--muted)">Searching real places near you…</p></div>
@@ -253,6 +257,7 @@
   let data = {hotels:[], eat:[], todo:[]};
   let activeCat = "hotels";
   let origin = null;
+  let legendFilter = null; // set by clicking a legend badge; click again to clear
 
   const $ = id => document.getElementById(id);
   const form=$("searchForm"), addr=$("addr"), zip=$("zip"), radius=$("radius"), goBtn=$("goBtn"), locBtn=$("locBtn");
@@ -289,6 +294,12 @@
 
   onlyAcc.addEventListener("change", render);
   onlyFam.addEventListener("change", render);
+  legend.addEventListener("click", e => {
+    const btn = e.target.closest(".lbtn"); if(!btn) return;
+    legendFilter = (legendFilter === btn.dataset.f) ? null : btn.dataset.f; // toggle
+    for(const b of legend.querySelectorAll(".lbtn")) b.classList.toggle("active", b.dataset.f === legendFilter);
+    render();
+  });
   kw.addEventListener("input", render);
   tabs.addEventListener("click", e => {
     const btn = e.target.closest(".tab"); if(!btn) return;
@@ -452,6 +463,12 @@
     let list = onlyAcc.checked ? all.filter(p => p.wheelchair==="yes" || p.wheelchair==="limited") : all;
     if(onlyFam.checked) list = list.filter(p => p.family);
     if(q) list = list.filter(p => (p.name + " " + p.kind).toLowerCase().includes(q));
+    // Legend badge filter: click a badge in the legend to see only that access level
+    if(legendFilter === "lwa") list = list.filter(p => p.lwaApproved);
+    else if(legendFilter === "yes") list = list.filter(p => p.wheelchair === "yes");
+    else if(legendFilter === "limited") list = list.filter(p => p.wheelchair === "limited");
+    else if(legendFilter === "no") list = list.filter(p => p.wheelchair !== "yes" && p.wheelchair !== "limited" && p.wheelchair !== "" && p.wheelchair !== "unknown");
+    else if(legendFilter === "unknown") list = list.filter(p => p.wheelchair === "" || p.wheelchair === "unknown");
     const approved = list.filter(p=>p.wheelchair==="yes").length;
     const lwaCount = list.filter(p=>p.lwaApproved).length;
     const fam = list.filter(p=>p.family).length;
