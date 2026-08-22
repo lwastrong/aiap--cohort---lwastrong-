@@ -20,8 +20,8 @@ A travel-planning web app for people with disabilities (all neurological disorde
 
 ## Live deployments
 
-- **GitHub Pages:** https://lwastrong.github.io/aiap--cohort---lwastrong-/ (auto-updates on every push to main)
-- **Netlify:** https://freewheelers-lwa.netlify.app (does NOT auto-update; redeploy manually — see workflows)
+- **GitHub Pages (THE official home — team decision):** https://lwastrong.github.io/aiap--cohort---lwastrong-/ (auto-updates on every push to main)
+- Netlify (https://freewheelers-lwa.netlify.app) exists but is NOT used by the team — don't bother redeploying it unless Art asks; it goes stale by design. Note: Netlify blocks curl (401 bot protection) — verify it in a real browser only.
 - **Repo:** https://github.com/lwastrong/aiap--cohort---lwastrong- (public, branch `main`, owner account `lwastrong`)
 - Downloaded/local copies of the HTML do NOT work (Google key is website-locked). The app only works at the two URLs above and http://localhost:8765 for testing.
 
