@@ -40,8 +40,8 @@ A travel-planning web app for people with disabilities (all neurological disorde
 ## File structure
 
 Repo root (= deploy root for both hosts):
-- `index.html` — MARKETING LANDING PAGE (by teammate Geoff, from branch `Geoff`; own design: Bricolage Grotesque/Inter fonts, green-amber palette). Its 3 CTA buttons link to `app.html`.
-- `app.html` — THE APP (identical copy: `FreeWheelers-App.html`). Direct URL: /app.html on either host.
+- `index.html` — MARKETING LANDING PAGE (authored by teammate Geoff, merged from branch `Geoff`; own design: Bricolage Grotesque/Inter fonts, green-amber palette — intentionally NOT the app's gold/teal). Contents: hero with WORKING search (city/zip + radius + Use-my-location → redirects to `app.html?q=…&r=…` or `?loc=1&r=…`); "Feel-good fuel first" toggle (reworded from Geoff's softer "protein-forward/optional" wording to LWA stance, per Art); six SAMPLE venue cards (fake places, labeled "Sample places shown for illustration" with link to real app) with Unsplash stock photos; How-it-works / What-we-verify / For-venues sections; community demo. Its 3 CTA buttons link to `app.html`.
+- `app.html` — THE APP (identical copy: `FreeWheelers-App.html`). Direct URL: /app.html on either host. Reads URL params on load: `?q=<text|zip>&r=<1600|3200|8000|16000>` auto-runs a search; `?loc=1` triggers geolocation.
 - `README.md` — project page: pitch, Verified checklist, features, data honesty, roadmap
 - `LWA-AccessAbility-Hackathon-Workbook-2026-08-20.docx` — completed Phase 1 workbook
 
@@ -57,6 +57,8 @@ Google Drive folder "Lwa app" (id 1Ef8ik295tVTXwYEhiDm8-LMWkeQfePeP): holds OLD 
 - **LWA food rules (Eat):** BAD_TYPES_RE filters out fast food/pizza/fried/dessert/sandwich/noodle/BBQ etc. — checked against Google types AND the restaurant NAME. GOOD_CUISINE_RE (steak/grill/seafood/burger/korean/mediterranean/american/breakfast…) earns lwaEats. **Chick-fil-A hard-blocked by name (BLOCKED_NAME_RE) — never shown; framed as "doesn't meet feel-good fuel standards" (NOT as a medical claim).** Vegetarian/vegan restaurants stay listed but carry a red "⛔ Critical — Not Recommended" box (oxalates→kidney stones stated; "inflammatory" framed as belief w/ Chaffee citation) and sort last. Burger spots get on-card tip: "order the patties only — skip the bun."
 - Card actions: Directions (Google Maps) · Website · 📞 Call Now (tel:) · 🍽️ Book Reservation (eat → OpenTable deep link `opentable.com/s?term=NAME&latitude=&longitude=&covers=2` — pre-fills!) · 🌻 Seed Oil Check (eat → seedoilscout.com) · 🏨 Book Now (hotels → Booking.com deep link `booking.com/searchresults.html?ss=NAME+CITY` — lands on exact hotel; Trivago/Kayak were tested and rejected: no free-text deep links).
 - Cards show ⭐ rating (count), accessible parking/seating chips, kid-friendly flag (goodForChildren or family place types minus bars/casinos).
+- **Photos on every card** (places.photos in FieldMask; media URL `places.googleapis.com/v1/{photo.name}/media?maxWidthPx=520&key=…`): first 6 eager, rest lazy (quota protection); missing photo = card renders without it (onerror removes wrapper). **Photos are CLICKABLE** (`a.cphoto-link` wrapping `img.cphoto`) → open that exact venue on Google Maps (`google.com/maps/search/?api=1&query=NAME&query_place_id=ID` — placeId stored per place) in a new tab; **hover/focus magnifies the photo** (scale 1.07 inside overflow-hidden wrapper) as the clickability cue.
+- **Legend badges are clickable FILTERS** ("Legend (click to filter)"): clicking a badge shows only that access level (lwa / yes / limited / no / unknown); clicking again clears; active badge gets a dark outline ring; `legendFilter` state var in render(). "what does this mean?" still anchors to #verified.
 - **✅ FreeWheelers Verified section** (#verified, landing page): 10-point checklist in 4 groups (Getting in / Getting around / Staying over / The human part), Art's story, honest "badge today vs. where we're headed," venue CTA mailto art@lwastrong.com.
 - **📸 Community Corner:** no-account posts with up to 4 canvas-compressed photos (localStorage key `lwa_community_posts`), per-post 👍 likes (toggle) and 💬 comments, delete button. Name placeholder: "e.g. John Doe from the United States". LIMITATION: localStorage = per-device only; real sharing needs a backend (roadmap). No videos (size).
 - UX: auto-scroll to loading/errors/results (they sit below the Verified section — without scroll, feedback is invisible → users think buttons are dead). Errors are friendly and specific, incl. missing-key and key-restriction messages.
@@ -73,6 +75,10 @@ Google Drive folder "Lwa app" (id 1Ef8ik295tVTXwYEhiDm8-LMWkeQfePeP): holds OLD 
 
 **Art's standing rules for Claude:** test before shipping; verify prices/names/links; flag unverifiable medical claims loudly and rephrase as LWA belief/opinion with approved sources (Chaffee, Baker, Berry, Saladino, etc.); never present Chick-fil-A/veg warnings as medical fact about named parties; files as real deliverables in outputs + present_files; LWA packages/nutrition facts come from his global instructions — never invent.
 
+## Team & Git state
+
+Collaborators work on branches: `Geoff` (landing page — merged into main with authorship credit), `Mohammads-Branch`, `Otis-Branch`, `landing-page` (was empty). All four branches were synced to equal main after the merge (a stale `Geoff` branch would have re-overwritten the app — that hazard is resolved, but future stale-branch merges remain the #1 repo risk). No PRs have ever actually been opened — a teammate once pushed a branch and *believed* they'd opened one. When a real PR arrives: review "Files changed" (especially anything touching index.html/app.html) before Art approves; Art may paste PR links here for review. Teammates were advised to sync/update their branch before starting new work. Merging to main = instant live deploy on Pages.
+
 ## Known issues / quirks
 
 - Google `primaryTypeDisplayName` is occasionally nonsense (e.g. a concert theater labeled "Manufacturer"). Cosmetic; offered to filter, not yet done.
@@ -87,4 +93,8 @@ Shared backend for Community Corner (real cross-device posts/likes/comments, vid
 
 ## Commit history landmarks
 
-Initial → app+workbook → FreeWheelers rebrand → Seed Oil Scout → carnivore/Chick-fil-A → veg warnings → Google Places migration + Pages live → lwastrong.com palette → Booking/OpenTable/Call buttons → zip field → "Search" label → worldwide+US priority → John Doe placeholder → likes+comments → Verified checklist → auto-scroll fix → Netlify deploy.
+Initial → app+workbook → FreeWheelers rebrand → Seed Oil Scout → carnivore/Chick-fil-A → veg warnings → Google Places migration + Pages live → lwastrong.com palette → Booking/OpenTable/Call buttons → zip field → "Search" label → worldwide+US priority → John Doe placeholder → likes+comments → Verified checklist → auto-scroll fix → Netlify deploy → CLAUDE.md → Geoff landing page merged as front door (app→app.html) → branch sync/cleanup → landing sample-card photos + hero search wired to app → "Feel-good fuel first" toggle rewording → sample-cards illustration label → result-card photos → clickable photos + hover zoom → Pages declared official/Netlify demoted → legend badges = clickable filters.
+
+## Stale-tab support pattern
+
+When Art reports "it's not working / nothing happens / no change": (1) his open tab usually predates the update — first answer is hard refresh (Cmd+Shift+R) or check WHICH page he's on (landing vs app, downloaded file vs live site); (2) verify the live site yourself in the browser before touching code; (3) remember downloaded copies never work (key lock) and Netlify serves 401 to curl but fine to browsers. This pattern has recurred multiple times.
