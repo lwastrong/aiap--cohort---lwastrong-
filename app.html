@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreeWheelers — Access Included. Adventure Guaranteed.</title>
+<style>
+  :root{
+    /* LWA Strong palette — matched to lwastrong.com (gold #C8900A · teal #00AEAE) */
+    --gold:#C8900A; --gold-dark:#A67607; --teal:#00AEAE; --dark:#1A1A1A;
+    --sand:#E3B505;
+    --bg:#FFFFFF; --section:#FAF4E6; --card:#FFFFFF; --card2:#F7F7F7; --border:#E8DFC9;
+    --text:#1A1A1A; --muted:#666666; --green:#2E9E5B; --amber:#D9930D; --red:#C0453A; --grey:#8A8A8A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  [hidden]{display:none !important;}
+  body{background:var(--bg); color:var(--text); font-family:'Arial Rounded MT Bold','Segoe UI', Arial, Helvetica, sans-serif; font-size:18px; line-height:1.5;}
+  a{color:var(--gold-dark);}
+  header{background:#fff; border-bottom:4px solid var(--gold); padding:30px 16px 24px; text-align:center;}
+  .logo{font-size:2.5rem; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--dark);}
+  .logo .access{color:var(--gold);}
+  .byline{color:var(--muted); font-size:1rem; margin-top:4px;}
+  .byline a{color:var(--gold-dark); font-weight:700; text-decoration:none;}
+  .tagline{color:var(--teal); font-weight:800; margin-top:10px; font-size:1.05rem; text-transform:uppercase; letter-spacing:.5px;}
+  main{max-width:980px; margin:0 auto; padding:28px 16px 60px;}
+  .panel{background:var(--section); border:1px solid var(--border); border-radius:14px; padding:22px;}
+  label{display:block; font-weight:700; margin-bottom:6px;}
+  .search-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .search-row .grow{flex:1 1 320px;}
+  input[type=text], select{
+    width:100%; padding:14px 16px; font-size:1.05rem; border-radius:10px;
+    border:2px solid var(--border); background:#fff; color:var(--text);
+  }
+  input[type=text]:focus, select:focus, button:focus{outline:3px solid var(--teal); outline-offset:2px;}
+  button{cursor:pointer; font-size:1.05rem; font-weight:800; border-radius:999px; border:none; padding:14px 26px;}
+  .btn-gold{background:var(--gold); color:#fff; text-transform:uppercase; letter-spacing:.5px;}
+  .btn-gold:hover{background:var(--gold-dark);}
+  .btn-ghost{background:#fff; color:var(--teal); border:2px solid var(--teal);}
+  .btn-ghost:hover{background:rgba(20,163,163,.08);}
+  .hint{color:var(--muted); font-size:.95rem; margin-top:10px;}
+  .tabs{display:flex; gap:10px; margin:26px 0 14px; flex-wrap:wrap;}
+  .tab{flex:1 1 160px; text-align:center; background:#fff; color:var(--text); border:2px solid var(--border); padding:14px 10px; border-radius:12px; font-weight:800; font-size:1.05rem;}
+  .tab[aria-selected="true"]{background:var(--gold); color:#fff; border-color:var(--gold);}
+  .tab .count{display:inline-block; margin-left:6px; font-weight:700; opacity:.8;}
+  .controls{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;}
+  .toggle{display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer; user-select:none;}
+  .toggle input{width:22px; height:22px; accent-color:var(--teal);}
+  .status{color:var(--muted); font-size:1rem;}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:8px; box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .card h3{font-size:1.15rem; line-height:1.3; color:var(--dark);}
+  .badge{display:inline-block; padding:5px 12px; border-radius:999px; font-weight:800; font-size:.85rem; color:#fff; width:fit-content;}
+  .b-lwa{background:var(--green);} .b-yes{background:#E3B505; color:#1A1A1A;} .b-limited{background:var(--amber);} .b-no{background:var(--red);} .b-unknown{background:var(--grey);}
+  .meta{color:var(--muted); font-size:.95rem;}
+  .feat{font-size:.92rem; color:var(--text);}
+  .crit{background:#FDE8E8; border:2px solid var(--red); border-radius:10px; padding:8px 10px; font-size:.92rem; color:#8A1C1C; font-weight:600;}
+  .crit .crit-head{display:block; font-weight:800; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px;}
+  .vgrid{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:16px; margin:14px 0;}
+  .vgrid > div{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .vhead{font-size:1.02rem; margin-bottom:8px; color:var(--dark);}
+  .vlist{list-style:none; padding:0; margin:0;}
+  .vlist li{padding:4px 0 4px 26px; position:relative; font-size:.95rem;}
+  .vlist li::before{content:"✓"; position:absolute; left:0; color:var(--green); font-weight:900;}
+  .feat span{display:inline-block; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:3px 8px; margin:2px 4px 2px 0;}
+  .card .actions{margin-top:auto; padding-top:8px; display:flex; gap:10px; flex-wrap:wrap;}
+  .card .actions a{font-weight:700; text-decoration:none; border:2px solid var(--teal); color:var(--teal); padding:8px 12px; border-radius:9px; font-size:.95rem;}
+  .card .actions a.book{background:var(--gold); border-color:var(--gold); color:#fff;}
+  .card .actions a.book:hover{background:var(--gold-dark); border-color:var(--gold-dark);}
+  .card .actions a:hover{background:rgba(20,163,163,.08);}
+  .empty{padding:40px 10px; text-align:center; color:var(--muted); font-size:1.05rem;}
+  .spinner{border:5px solid var(--border); border-top:5px solid var(--gold); border-radius:50%; width:44px; height:44px; margin:30px auto; animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 8px; font-size:.9rem; color:var(--muted); align-items:center;}
+  footer{background:var(--section); border-top:3px solid var(--gold); margin-top:40px; padding:26px 16px; text-align:center; color:var(--muted); font-size:.95rem;}
+  footer .cta{margin-bottom:10px; color:var(--text);}
+  footer .cta a{font-weight:800; text-decoration:none;}
+  .disclaimer{max-width:760px; margin:8px auto 0; font-size:.85rem;}
+  .visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="access">Free</span>Wheelers</div>
+  <div class="byline">Inspired by <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas &amp; LWA Strong</a></div>
+  <div class="tagline">Access Included. Adventure Guaranteed.</div>
+</header>
+
+<main>
+  <section class="panel" aria-label="Search">
+    <form id="searchForm">
+      <div class="search-row">
+        <div class="grow">
+          <label for="addr">Where are you going?</label>
+          <input type="text" id="addr" placeholder="Anywhere in the world — the coast, the mountains, a lake town, or a big city" autocomplete="street-address">
+        </div>
+        <div>
+          <label for="zip">Search for zip code</label>
+          <input type="text" id="zip" placeholder="e.g. 29577" inputmode="numeric" pattern="\d{5}" maxlength="5" style="width:130px" autocomplete="postal-code">
+        </div>
+        <div>
+          <label for="radius">Search radius</label>
+          <select id="radius">
+            <option value="1600">1 mile</option>
+            <option value="3200" selected>2 miles</option>
+            <option value="8000">5 miles</option>
+            <option value="16000">10 miles</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-row" style="margin-top:14px">
+        <button type="submit" class="btn-gold" id="goBtn">Search</button>
+        <button type="button" class="btn-ghost" id="locBtn">Use my location</button>
+      </div>
+    </form>
+    <p class="hint">FreeWheelers matches you with hotels, restaurants, and activities that already work for your group — real access details, ratings, and reviews from live Google Maps data. All that's left to plan is how much fun you're going to have.</p>
+    <p class="hint">🥩 <strong>Eat runs on feel-good fuel:</strong> fast food, fried, dessert-first, and sugar-sauce BBQ are filtered out. Meat-first spots (steakhouse, grill, seafood) get the badge — food that keeps everyone feeling their best.</p>
+    <p class="hint">🌻 <strong>No seed oils, either.</strong> We believe your brain and nervous system deserve better fuel. Every restaurant card has a Seed Oil Check button — verify what a kitchen cooks with at <a href="https://www.seedoilscout.com/" target="_blank" rel="noopener">Seed Oil Scout</a> before you book the table.</p>
+    <p class="hint">💡 <strong>Carnivore hack:</strong> almost any meat-first spot works if you order right — at a burger place, get the patties only and skip the bun. ⛔ <strong>Hard pass: Chick-fil-A.</strong> The ingredient list doesn't meet our feel-good fuel standards — it will never appear in FreeWheelers results.</p>
+    <p class="hint">⛔ <strong>Vegetarian restaurants — not recommended.</strong> Plant-based menus are loaded with oxalates, compounds linked to kidney stones, and we believe a plant-heavy diet is inflammatory and works against the brain and nervous system (see Dr. Anthony Chaffee's research library at <a href="https://www.dranthonychaffee.com/resources" target="_blank" rel="noopener">dranthonychaffee.com</a>). They stay in the list so you can see access details — but each one carries a critical Not Recommended warning.</p>
+  </section>
+
+  <section class="panel" id="verified" style="margin-top:24px" aria-label="The FreeWheelers Verified Checklist">
+    <h2 style="margin-bottom:6px">✅ FreeWheelers Verified — access you can actually trust</h2>
+    <p class="hint" style="margin-top:0"><strong>Other apps show you a wheelchair icon someone clicked once.</strong> We hold every place to a real standard — built from the same mobility checklist that took our founder, <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas of LWA Strong</a>, from a wheelchair every neurologist called permanent to walking, driving, and traveling on his own.</p>
+    <div class="vgrid">
+      <div>
+        <h3 class="vhead">🚪 Getting in</h3>
+        <ul class="vlist">
+          <li>Step-free entrance or a real ramp — not "just one small step"</li>
+          <li>Doorways wide enough for every chair (32″+)</li>
+          <li>Accessible parking or a safe drop-off at the door</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🧭 Getting around</h3>
+        <ul class="vlist">
+          <li>Wheelchair-accessible restroom</li>
+          <li>Clear paths inside — no squeezing between tables</li>
+          <li>Accessible seating and table height</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🛏️ Staying over (hotels)</h3>
+        <ul class="vlist">
+          <li>Roll-in shower or grab bars that hold real weight</li>
+          <li>Transfer-friendly bed height</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="vhead">🤝 The human part</h3>
+        <ul class="vlist">
+          <li>Staff who help without being asked twice</li>
+          <li>Feel-good fuel on the menu (restaurants) — meat-first options that support recovery</li>
+        </ul>
+      </div>
+    </div>
+    <p class="hint"><strong>How the badge works today:</strong> a green <span class="badge b-lwa" style="font-size:.8rem">✓ FreeWheelers Approved</span> means live Google Maps data confirms an accessible entrance <em>plus</em> an accessible restroom (or a feel-good-fuel menu for restaurants). <strong>Where we're headed:</strong> full 10-point on-site verification with partner venues — so the badge means someone who lives this checked it in person.</p>
+    <p class="hint">🏨 <strong>Run a hotel, restaurant, or attraction?</strong> Get on the list — <a href="mailto:art@lwastrong.com?subject=FreeWheelers%20Verified%20request">request FreeWheelers verification</a>.</p>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="Place categories" id="tabs" hidden>
+    <button class="tab" role="tab" aria-selected="true" data-cat="hotels" id="tab-hotels">🏨 Stay<span class="count" id="c-hotels"></span></button>
+    <button class="tab" role="tab" aria-selected="false" data-cat="eat" id="tab-eat">🍽️ Eat<span class="count" id="c-eat"></span></button>
+    <button class="tab" role="tab" aria-selected="false" data-cat="todo" id="tab-todo">🎯 Do<span class="count" id="c-todo"></span></button>
+  </div>
+
+  <div class="controls" id="controls" hidden>
+    <div style="display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
+      <strong style="color:var(--text)">Your access profile:</strong>
+      <label class="toggle"><input type="checkbox" id="onlyAccessible"> ♿ Access verified only</label>
+      <label class="toggle"><input type="checkbox" id="onlyFamily"> 👨‍👩‍👧 Kid-friendly only</label>
+    </div>
+    <span class="status" id="status"></span>
+  </div>
+  <div id="kwRow" hidden style="margin-bottom:16px;">
+    <label for="kw" class="visually-hidden">Search activities and places</label>
+    <input type="text" id="kw" placeholder="🔍 Search activities — e.g. pool, museum, park, gym, horse riding, steak" style="max-width:560px;">
+  </div>
+
+  <div class="legend" id="legend" hidden>
+    <strong style="color:var(--text)">Legend:</strong>
+    <span><a href="#verified" style="text-decoration:none" title="See the FreeWheelers Verified checklist"><span class="badge b-lwa">✓ FreeWheelers Approved</span></a> <a href="#verified" style="font-size:.85rem">what does this mean?</a></span>
+    <span><span class="badge b-yes">✓ Access Verified</span></span>
+    <span><span class="badge b-limited">◐ Partially Accessible</span></span>
+    <span><span class="badge b-no">✕ Not Accessible</span></span>
+    <span><span class="badge b-unknown">? Not Verified — call ahead</span></span>
+  </div>
+
+  <div id="loading" hidden><div class="spinner" role="status" aria-label="Loading"></div><p style="text-align:center;color:var(--muted)">Searching real places near you…</p></div>
+  <div id="results" class="cards" aria-live="polite"></div>
+  <div id="empty" class="empty" hidden></div>
+
+  <section class="panel" id="community" style="margin-top:36px" aria-label="Community Corner">
+    <h2 style="margin-bottom:6px">📸 Community Corner</h2>
+    <p class="hint" style="margin-top:0">Been somewhere? Tell others how accessible it REALLY was — and add photos so people know before they go. No account needed. <strong>Demo version: posts save on this device only.</strong></p>
+    <form id="postForm" style="margin-top:14px">
+      <div class="search-row">
+        <div class="grow"><label for="pname">Your name (optional)</label><input type="text" id="pname" placeholder="e.g. John Doe from the United States"></div>
+        <div class="grow"><label for="pplace">Place you're reviewing</label><input type="text" id="pplace" placeholder="e.g. Omni Shoreham Hotel, Washington DC" required></div>
+      </div>
+      <div style="margin-top:12px">
+        <label for="ptext">Your experience</label>
+        <textarea id="ptext" rows="3" required placeholder="Ramp at the side entrance, wide doorways, staff helped with the elevator…" style="width:100%; padding:14px 16px; font-size:1.05rem; border-radius:10px; border:2px solid var(--border); background:#fff; color:var(--text); font-family:inherit;"></textarea>
+      </div>
+      <div class="search-row" style="margin-top:12px; align-items:center;">
+        <div><label for="pphoto">Add photos (optional)</label><input type="file" id="pphoto" accept="image/*" multiple></div>
+        <button type="submit" class="btn-gold" style="margin-top:22px">Post to Community</button>
+      </div>
+    </form>
+    <div id="posts" style="margin-top:20px"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="cta" style="font-size:1.1rem"><strong>Your next trip is waiting.</strong> Pick a destination, get access, go. Five minutes, tops.</div>
+  <div>FreeWheelers · Inspired by <a href="https://lwastrong.com" target="_blank" rel="noopener">Art Thomas &amp; LWA Strong</a> · Access Included. Adventure Guaranteed.</div>
+  <p class="disclaimer">Access details come from Google Maps and may be incomplete or outdated. "Not Verified" does not mean inaccessible — it means Google has no report for it yet. Always confirm directly with the venue before visiting. FreeWheelers is an informational tool, not a guarantee of access.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const NOMINATIM = "https://nominatim.openstreetmap.org/search";
+
+  // ===== Google Maps (Places API New) =====
+  // Paste your Google Maps API key between the quotes below.
+  const GOOGLE_API_KEY = "AIzaSyAfzZiYJQsDFrA-aCswyru0BzD7s1RRdcY";
+  const PLACES_NEARBY = "https://places.googleapis.com/v1/places:searchNearby";
+  const PLACES_TEXT   = "https://places.googleapis.com/v1/places:searchText";
+  const FIELD_MASK = [
+    "places.id","places.displayName","places.types","places.primaryTypeDisplayName",
+    "places.location","places.formattedAddress","places.nationalPhoneNumber",
+    "places.websiteUri","places.accessibilityOptions","places.goodForChildren",
+    "places.rating","places.userRatingCount"
+  ].join(",");
+  const TODO_TYPES_A = ["tourist_attraction","museum","art_gallery","movie_theater","performing_arts_theater","library","community_center","casino"];
+  const TODO_TYPES_B = ["park","zoo","aquarium","amusement_park","national_park","hiking_area","gym","golf_course","bowling_alley"];
+
+  // LWA nutrition rules: no fast food, nothing fried/processed/dessert-first (checked against Google place types)
+  const BAD_TYPES_RE = /(pizza|fast_food|fried|sandwich|bagel|bakery|dessert|donut|doughnut|ice_cream|candy|chocolate|confectionery|juice|smoothie|bubble_tea|tea_house|ramen|noodle|pasta|waffle|pancake|crepe|barbecue|bbq)/;
+  // Carnivore/keto-friendly, meat-first styles get the badge (no BBQ — sauces are sugar bombs)
+  const GOOD_CUISINE_RE = /(steak|grill|seafood|fish|oyster|brazilian|argentinian|churrasco|korean|kebab|greek|turkish|lebanese|persian|mediterranean|american|hamburger|burger|brunch|breakfast)/;
+  // Hard-blocked by name: never shown, no matter how it's tagged (doesn't meet feel-good fuel standards)
+  const BLOCKED_NAME_RE = /chick[\s-]?fil[\s-]?a/i;
+  // Vegetarian/vegan restaurants: kept in the list but marked CRITICAL — NOT RECOMMENDED
+  const VEG_RE = /(vegetarian|vegan)/;
+  const FAMILY_TYPES = new Set(["zoo","aquarium","amusement_park","water_park","park","national_park","playground","bowling_alley","ice_skating_rink","miniature_golf","museum"]);
+  const ADULT_TYPES = new Set(["bar","night_club","casino","pub","liquor_store"]);
+
+  let data = {hotels:[], eat:[], todo:[]};
+  let activeCat = "hotels";
+  let origin = null;
+
+  const $ = id => document.getElementById(id);
+  const form=$("searchForm"), addr=$("addr"), zip=$("zip"), radius=$("radius"), goBtn=$("goBtn"), locBtn=$("locBtn");
+  const tabs=$("tabs"), controls=$("controls"), legend=$("legend"), loading=$("loading"),
+        results=$("results"), empty=$("empty"), statusEl=$("status"), onlyAcc=$("onlyAccessible"), onlyFam=$("onlyFamily"),
+        kwRow=$("kwRow"), kw=$("kw");
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const zipVal = zip.value.trim();
+    if(zipVal && !/^\d{5}$/.test(zipVal)){ showError("That zip code doesn't look right — it should be 5 digits, like 29577."); return; }
+    // Use whichever is filled in; both together makes the search even more precise
+    const query = [addr.value.trim(), zipVal ? zipVal + " USA" : ""].filter(Boolean).join(" ");
+    if(!query){ showError("Type a destination or a zip code first."); return; }
+    setLoading(true, "Finding that address…");
+    try{
+      const geo = await geocode(query);
+      if(!geo){ showError("Couldn't find that address. Try adding a city or ZIP code."); return; }
+      origin = geo;
+      await runSearch(geo.lat, geo.lon);
+    }catch(err){ showError("Something went wrong reaching the map service. Check your internet connection and try again."); console.error(err); }
+  });
+
+  locBtn.addEventListener("click", () => {
+    if(!navigator.geolocation){ showError("Your browser doesn't support location."); return; }
+    setLoading(true, "Getting your location…");
+    navigator.geolocation.getCurrentPosition(async pos => {
+      origin = {lat: pos.coords.latitude, lon: pos.coords.longitude, name: "your location"};
+      addr.value = "My current location";
+      try{ await runSearch(origin.lat, origin.lon); }
+      catch(err){ showError("Couldn't load places. Try again."); console.error(err); }
+    }, () => showError("Location permission denied. Type an address instead."));
+  });
+
+  onlyAcc.addEventListener("change", render);
+  onlyFam.addEventListener("change", render);
+  kw.addEventListener("input", render);
+  tabs.addEventListener("click", e => {
+    const btn = e.target.closest(".tab"); if(!btn) return;
+    activeCat = btn.dataset.cat;
+    for(const t of tabs.querySelectorAll(".tab")) t.setAttribute("aria-selected", t===btn ? "true":"false");
+    render();
+  });
+
+  async function geocode(q){
+    // Worldwide search with US priority: among the top matches, prefer a United States one;
+    // an explicit international search (e.g. "Tokyo, Japan") still goes exactly where it says
+    const url = NOMINATIM + "?format=json&limit=5&q=" + encodeURIComponent(q);
+    const res = await fetch(url, {headers:{"Accept":"application/json"}});
+    const arr = await res.json();
+    if(!arr.length) return null;
+    const best = arr.find(r => /United States/.test(r.display_name)) || arr[0];
+    return {lat:+best.lat, lon:+best.lon, name:best.display_name};
+  }
+
+  async function gplaces(url, body, wantToken){
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-FieldMask": wantToken ? FIELD_MASK + ",nextPageToken" : FIELD_MASK
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const txt = await res.text();
+      throw new Error("Google Places " + res.status + ": " + txt.slice(0, 300));
+    }
+    return res.json();
+  }
+
+  // Restaurants via Text Search — pages up to 60 results
+  async function eatSearch(lat, lon, r){
+    let places = [], token = null;
+    for(let page = 0; page < 3; page++){
+      const body = { textQuery: "restaurants", pageSize: 20,
+        locationBias: { circle: { center: {latitude: lat, longitude: lon}, radius: r } } };
+      if(token) body.pageToken = token;
+      const j = await gplaces(PLACES_TEXT, body, true);
+      places = places.concat(j.places || []);
+      token = j.nextPageToken;
+      if(!token) break;
+    }
+    return places;
+  }
+
+  async function runSearch(lat, lon){
+    if(GOOGLE_API_KEY.indexOf("PASTE") === 0){
+      setLoading(false);
+      showError("The Google Maps key hasn't been added yet. Open this file and paste your key where it says PASTE_YOUR_GOOGLE_KEY_HERE.");
+      return;
+    }
+    setLoading(true, "Searching Google Maps for real places nearby…");
+    const r = Math.min(+radius.value, 50000);
+    const circle = { circle: { center: {latitude: lat, longitude: lon}, radius: r } };
+    let out = null;
+    try{
+      const [hotelsRes, todoA, todoB, eatPlaces] = await Promise.all([
+        gplaces(PLACES_NEARBY, { includedTypes:["lodging"], maxResultCount:20, locationRestriction: circle }),
+        gplaces(PLACES_NEARBY, { includedTypes: TODO_TYPES_A, maxResultCount:20, locationRestriction: circle }),
+        gplaces(PLACES_NEARBY, { includedTypes: TODO_TYPES_B, maxResultCount:20, locationRestriction: circle }),
+        eatSearch(lat, lon, r)
+      ]);
+      out = {
+        hotels: hotelsRes.places || [],
+        eat: eatPlaces,
+        todo: [...(todoA.places || []), ...(todoB.places || [])]
+      };
+    }catch(err){
+      console.error("Google Places failed:", err);
+      setLoading(false);
+      showError("Google Maps couldn't load places. If this keeps happening, the API key may not be set up for the Places API (New), or its website restrictions don't include this page.");
+      return;
+    }
+    ingest(out, lat, lon);
+    setLoading(false);
+    tabs.hidden = controls.hidden = legend.hidden = kwRow.hidden = false;
+    render();
+    setTimeout(()=>tabs.scrollIntoView({block:"start"}), 50); // bring results into view past the Verified section
+  }
+
+  function ingest(res, lat, lon){
+    data = {hotels:[], eat:[], todo:[]};
+    const seen = new Set();
+    const radM = Math.min(+radius.value, 50000);
+    for(const cat of ["hotels","eat","todo"]){
+      for(const p of res[cat]){
+        const name = p.displayName && p.displayName.text || "";
+        if(!name) continue;
+        if(BLOCKED_NAME_RE.test(name)) continue; // hard-blocked — never listed
+        const plat = p.location && p.location.latitude, plon = p.location && p.location.longitude;
+        if(plat == null) continue;
+        const key = cat + "|" + (p.id || name + plat);
+        if(seen.has(key)) continue; seen.add(key);
+        const typesArr = p.types || [];
+        const types = typesArr.join(",");
+        const distMi = haversineMi(lat, lon, plat, plon);
+        if(distMi * 1609.34 > radM * 1.05) continue; // Text Search can drift past the radius — trim it
+
+        let lwaEats = false, burgerSpot = false, vegSpot = false;
+        if(cat === "eat"){
+          if(BAD_TYPES_RE.test(types + "," + name.toLowerCase().replace(/\s+/g,"_"))) continue; // fried/processed/dessert-first — filtered out (checks the name too)
+          vegSpot = VEG_RE.test(types) || VEG_RE.test(name.toLowerCase());
+          if(!vegSpot){
+            lwaEats = GOOD_CUISINE_RE.test(types);
+            burgerSpot = /hamburger|burger/.test(types + "," + name.toLowerCase());
+          }
+        }
+
+        // Google accessibility fields → same yes/no/unknown scale as before
+        const a = p.accessibilityOptions || {};
+        const wc  = a.wheelchairAccessibleEntrance === true ? "yes" : a.wheelchairAccessibleEntrance === false ? "no" : "";
+        const wcT = a.wheelchairAccessibleRestroom === true ? "yes" : a.wheelchairAccessibleRestroom === false ? "no" : "";
+        const extras = [];
+        if(a.wheelchairAccessibleParking === true) extras.push("Accessible parking");
+        if(a.wheelchairAccessibleSeating === true) extras.push("Accessible seating");
+
+        const famKind = typesArr.some(t => FAMILY_TYPES.has(t));
+        const adult = typesArr.some(t => ADULT_TYPES.has(t));
+        const family = p.goodForChildren === true || (famKind && !adult);
+
+        // Two-tier approval: yellow = verified accessible; green = accessible AND meets LWA standards
+        const lwaApproved = wc === "yes" && (cat === "eat" ? lwaEats : wcT === "yes");
+        const kind = (p.primaryTypeDisplayName && p.primaryTypeDisplayName.text) || pretty(typesArr[0] || "");
+
+        data[cat].push({
+          cat, family, lwaEats, lwaApproved, burgerSpot, vegSpot,
+          name, kind,
+          lat: plat, lon: plon,
+          distMi,
+          wheelchair: wc,
+          wcToilet: wcT,
+          wcDesc: extras.join(" · "),
+          phone: p.nationalPhoneNumber || "",
+          website: p.websiteUri || "",
+          hours: "",
+          addr: (p.formattedAddress || "").replace(/, (USA|United States)$/, ""),
+          rating: p.rating || 0,
+          ratings: p.userRatingCount || 0
+        });
+      }
+    }
+    const rank = w => w==="yes"?0 : w==="limited"?1 : (w===""||w==="unknown")?2 : 3;
+    for(const k in data) data[k].sort((a,b)=> (a.vegSpot?1:0)-(b.vegSpot?1:0) || (b.lwaApproved?1:0)-(a.lwaApproved?1:0) || rank(a.wheelchair)-rank(b.wheelchair) || (b.lwaEats?1:0)-(a.lwaEats?1:0) || a.distMi-b.distMi);
+    $("c-hotels").textContent = "(" + data.hotels.length + ")";
+    $("c-eat").textContent = "(" + data.eat.length + ")";
+    $("c-todo").textContent = "(" + data.todo.length + ")";
+  }
+
+  function render(){
+    const q = kw.value.trim().toLowerCase();
+    // With a search word, look across ALL categories so nothing gets missed; otherwise show the active tab
+    const all = q ? [...data.hotels, ...data.eat, ...data.todo] : (data[activeCat] || []);
+    let list = onlyAcc.checked ? all.filter(p => p.wheelchair==="yes" || p.wheelchair==="limited") : all;
+    if(onlyFam.checked) list = list.filter(p => p.family);
+    if(q) list = list.filter(p => (p.name + " " + p.kind).toLowerCase().includes(q));
+    const approved = list.filter(p=>p.wheelchair==="yes").length;
+    const lwaCount = list.filter(p=>p.lwaApproved).length;
+    const fam = list.filter(p=>p.family).length;
+    statusEl.textContent = list.length + " place" + (list.length===1?"":"s") + (q ? " match \"" + kw.value.trim() + "\" (all categories)" : " shown") + " · " + lwaCount + " FreeWheelers approved · " + approved + " access verified · " + fam + " kid-friendly";
+    results.innerHTML = "";
+    empty.hidden = true;
+    if(!list.length){
+      empty.hidden = false;
+      empty.textContent = (onlyAcc.checked || onlyFam.checked || kw.value.trim())
+        ? "No places match your search or filters in this category. Try a different word, another tab, or uncheck a filter."
+        : "No places found in this category. Try a bigger radius or a different address.";
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for(const p of list.slice(0,300)){
+      const card = document.createElement("article");
+      card.className = "card";
+      const b = badge(p.wheelchair, p.lwaApproved);
+      const feats = [];
+      if(p.rating) feats.push("⭐ " + p.rating.toFixed(1) + (p.ratings ? " (" + p.ratings.toLocaleString() + ")" : ""));
+      if(p.lwaEats) feats.push("🥩 Feel-good fuel — carnivore/keto-friendly");
+      if(p.burgerSpot) feats.push("💡 Carnivore hack: order the patties only — skip the bun");
+      if(p.family) feats.push("👨‍👩‍👧 Family friendly");
+      if(p.wcToilet==="yes") feats.push("♿ Accessible restroom");
+      if(p.wcDesc) feats.push("ℹ️ " + escapeHtml(p.wcDesc));
+      if(p.hours) feats.push("🕒 " + escapeHtml(p.hours));
+      card.innerHTML =
+        '<span class="badge '+b.cls+'">'+b.label+'</span>' +
+        '<h3>'+escapeHtml(p.name)+'</h3>' +
+        '<div class="meta">'+escapeHtml(p.kind)+' · '+p.distMi.toFixed(1)+' mi away'+(p.addr? ' · '+escapeHtml(p.addr):'')+'</div>' +
+        (feats.length ? '<div class="feat">'+feats.map(f=>'<span>'+f+'</span>').join('')+'</div>' : '') +
+        (p.vegSpot ? '<div class="crit"><span class="crit-head">⛔ Critical — Not Recommended</span>Vegetarian restaurant. Plant-based menus are loaded with oxalates — compounds linked to kidney stones — and we believe a plant-heavy diet works against the brain and nervous system. Listed for access info only.</div>' : '') +
+        '<div class="actions">' +
+          '<a href="https://www.google.com/maps/dir/?api=1&destination='+p.lat+','+p.lon+'" target="_blank" rel="noopener">Directions →</a>' +
+          (p.website ? '<a href="'+encodeURI(p.website)+'" target="_blank" rel="noopener">Website</a>' : '') +
+          (p.phone ? '<a href="tel:'+p.phone.replace(/[^+\d]/g,"")+'">📞 Call Now</a>' : '') +
+          (p.cat === "eat" ? '<a class="book" href="https://www.opentable.com/s?term='+encodeURIComponent(p.name)+'&latitude='+p.lat+'&longitude='+p.lon+'&covers=2" target="_blank" rel="noopener" title="Find this restaurant on OpenTable and book a table">🍽️ Book Reservation</a>' : '') +
+          (p.cat === "eat" ? '<a href="https://www.seedoilscout.com/" target="_blank" rel="noopener" title="Check this restaurant\'s cooking oils on Seed Oil Scout">🌻 Seed Oil Check</a>' : '') +
+          (p.cat === "hotels" ? '<a class="book" href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(p.name + " " + ((p.addr.split(",")[1]||"").trim()))+'" target="_blank" rel="noopener" title="Book this hotel on Booking.com">🏨 Book Now</a>' : '') +
+        '</div>';
+      frag.appendChild(card);
+    }
+    results.appendChild(frag);
+  }
+
+  function badge(w, lwa){
+    if(lwa) return {cls:"b-lwa", label:"✓ FreeWheelers Approved"};
+    if(w==="yes") return {cls:"b-yes", label:"✓ Access Verified"};
+    if(w==="limited") return {cls:"b-limited", label:"◐ Partially Accessible"};
+    if(w==="no") return {cls:"b-no", label:"✕ Not Accessible"};
+    return {cls:"b-unknown", label:"? Not Verified — call ahead"};
+  }
+  function setLoading(on, msg){
+    loading.hidden = !on;
+    if(on){
+      results.innerHTML=""; empty.hidden=true; loading.querySelector("p").textContent = msg || "Loading…";
+      setTimeout(()=>loading.scrollIntoView({block:"center"}), 50); // keep progress visible below the Verified section
+    }
+    goBtn.disabled = on;
+  }
+  function showError(msg){
+    setLoading(false); empty.hidden=false; empty.textContent = msg;
+    setTimeout(()=>empty.scrollIntoView({block:"center"}), 50); // never let an error hide off-screen
+  }
+  function haversineMi(a,b,c,d){
+    const R=3958.8, toR=x=>x*Math.PI/180;
+    const dLat=toR(c-a), dLon=toR(d-b);
+    const h=Math.sin(dLat/2)**2 + Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dLon/2)**2;
+    return 2*R*Math.asin(Math.sqrt(h));
+  }
+  function pretty(s){ return s.replace(/_/g," ").replace(/\b\w/g,ch=>ch.toUpperCase()); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+
+  // Book Now (hotels) and Book Reservation (restaurants) deep-link straight to Booking.com / OpenTable
+
+  // ===== Community Corner (posts stored on this device — no account needed) =====
+  const postForm = $("postForm"), postsEl = $("posts");
+  const POSTS_KEY = "lwa_community_posts";
+
+  function loadPosts(){ try{ return JSON.parse(localStorage.getItem(POSTS_KEY)) || []; }catch(e){ return []; } }
+  function savePosts(list){
+    try{ localStorage.setItem(POSTS_KEY, JSON.stringify(list)); return true; }
+    catch(e){ alert("Storage is full on this device. Delete an older post or use fewer photos."); return false; }
+  }
+  function compressImage(file){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 800;
+        let w = img.width, h = img.height;
+        if(w > max || h > max){ const s = max / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s); }
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", 0.7));
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  function renderPosts(){
+    const list = loadPosts();
+    postsEl.innerHTML = list.length ? "" : '<p class="hint">No community posts yet on this device. Be the first!</p>';
+    for(const p of list){
+      const cmts = p.comments || [];
+      const card = document.createElement("article");
+      card.className = "card"; card.style.marginBottom = "12px";
+      card.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px;">' +
+          '<h3>' + escapeHtml(p.place) + '</h3>' +
+          '<button type="button" class="del-post" data-id="' + p.id + '" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px;" aria-label="Delete post">✕</button>' +
+        '</div>' +
+        '<div class="meta">' + escapeHtml(p.name || "Anonymous") + ' · ' + new Date(p.ts).toLocaleDateString() + '</div>' +
+        '<p style="font-size:.98rem">' + escapeHtml(p.text) + '</p>' +
+        (p.photos && p.photos.length
+          ? '<div style="display:flex; gap:8px; flex-wrap:wrap;">' + p.photos.map(src => '<img src="' + src + '" alt="Community photo of ' + escapeHtml(p.place) + '" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--border);">').join('') + '</div>'
+          : '') +
+        // Likes + comments
+        '<div style="margin-top:10px; display:flex; gap:12px; align-items:center;">' +
+          '<button type="button" class="like-btn" data-id="' + p.id + '" style="border:2px solid var(--teal); background:' + (p.liked ? 'var(--teal)' : 'transparent') + '; color:' + (p.liked ? '#fff' : 'var(--teal)') + '; font-weight:700; border-radius:999px; padding:7px 14px; cursor:pointer; font-size:.95rem;">' + (p.liked ? '💛 Liked' : '👍 Like') + ' (' + (p.likes || 0) + ')</button>' +
+          '<span class="meta">💬 ' + cmts.length + (cmts.length === 1 ? ' comment' : ' comments') + '</span>' +
+        '</div>' +
+        (cmts.length
+          ? '<div style="margin-top:8px">' + cmts.map(c =>
+              '<div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:8px 12px; margin-top:6px; font-size:.95rem;"><strong>' + escapeHtml(c.name || "Anonymous") + '</strong> <span class="meta">· ' + new Date(c.ts).toLocaleDateString() + '</span><br>' + escapeHtml(c.text) + '</div>'
+            ).join('') + '</div>'
+          : '') +
+        '<form class="cmt-form" data-id="' + p.id + '" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">' +
+          '<input type="text" class="cmt-name" placeholder="Name (optional)" style="flex:0 1 170px; min-width:120px;">' +
+          '<input type="text" class="cmt-text" placeholder="Write a comment…" required maxlength="500" style="flex:1 1 200px; min-width:160px;">' +
+          '<button type="submit" class="btn-gold" style="padding:8px 16px;">Comment</button>' +
+        '</form>';
+      postsEl.appendChild(card);
+    }
+  }
+  postsEl.addEventListener("click", e => {
+    const del = e.target.closest(".del-post");
+    if(del){
+      savePosts(loadPosts().filter(p => String(p.id) !== del.dataset.id));
+      renderPosts();
+      return;
+    }
+    const like = e.target.closest(".like-btn");
+    if(like){
+      const list = loadPosts();
+      const p = list.find(x => String(x.id) === like.dataset.id);
+      if(!p) return;
+      p.liked = !p.liked;
+      p.likes = Math.max(0, (p.likes || 0) + (p.liked ? 1 : -1));
+      if(savePosts(list)) renderPosts();
+    }
+  });
+  postsEl.addEventListener("submit", e => {
+    const f = e.target.closest(".cmt-form"); if(!f) return;
+    e.preventDefault();
+    const text = f.querySelector(".cmt-text").value.trim(); if(!text) return;
+    const list = loadPosts();
+    const p = list.find(x => String(x.id) === f.dataset.id);
+    if(!p) return;
+    (p.comments = p.comments || []).push({ name: f.querySelector(".cmt-name").value.trim(), text, ts: Date.now() });
+    if(savePosts(list)) renderPosts();
+  });
+  postForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const files = [...($("pphoto").files || [])].slice(0, 4); // max 4 photos per post
+    let photos = [];
+    try{ photos = await Promise.all(files.map(compressImage)); }
+    catch(err){ console.warn("Photo processing failed", err); }
+    const post = {
+      id: Date.now(),
+      ts: Date.now(),
+      name: $("pname").value.trim(),
+      place: $("pplace").value.trim(),
+      text: $("ptext").value.trim(),
+      photos
+    };
+    const list = loadPosts(); list.unshift(post);
+    if(savePosts(list)){ postForm.reset(); renderPosts(); }
+  });
+  renderPosts();
+})();
+</script>
+</body>
+</html>

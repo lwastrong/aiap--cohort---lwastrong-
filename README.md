@@ -10,7 +10,8 @@ Inspired by teammate [Art Thomas](https://lwastrong.com), founder of LWA Strong,
 
 Type any destination in the world — US searched first — and instantly see nearby places across three categories — **Stay · Eat · Do** — each with real access details, star ratings, and review counts pulled live from Google Maps (Places API).
 
-**Live app:** https://lwastrong.github.io/aiap--cohort---lwastrong-/
+**Live site:** https://lwastrong.github.io/aiap--cohort---lwastrong-/ (landing page → app) · also at https://freewheelers-lwa.netlify.app
+**Straight to the app:** https://lwastrong.github.io/aiap--cohort---lwastrong-/app.html
 
 - 🟢 **FreeWheelers Approved** — verified wheelchair-accessible AND meets our standards (accessible restroom, or feel-good-fuel menu for restaurants)
 - 🟡 **Access Verified** — verified wheelchair-accessible

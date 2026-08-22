@@ -40,7 +40,8 @@ A travel-planning web app for people with disabilities (all neurological disorde
 ## File structure
 
 Repo root (= deploy root for both hosts):
-- `index.html` — THE APP (identical copy: `FreeWheelers-App.html`)
+- `index.html` — MARKETING LANDING PAGE (by teammate Geoff, from branch `Geoff`; own design: Bricolage Grotesque/Inter fonts, green-amber palette). Its 3 CTA buttons link to `app.html`.
+- `app.html` — THE APP (identical copy: `FreeWheelers-App.html`). Direct URL: /app.html on either host.
 - `README.md` — project page: pitch, Verified checklist, features, data honesty, roadmap
 - `LWA-AccessAbility-Hackathon-Workbook-2026-08-20.docx` — completed Phase 1 workbook
 
@@ -66,7 +67,7 @@ Google Drive folder "Lwa app" (id 1Ef8ik295tVTXwYEhiDm8-LMWkeQfePeP): holds OLD 
 **Edit → test → ship:**
 1. Edit the outputs master `LWA-AccessAbility-App-2026-08-20.html` (Read before Edit).
 2. Test on Art's Mac: `osascript do shell script` → `cd <outputs>; python3 -m http.server 8765 &` → drive http://localhost:8765/… with claude-in-chrome (tabs_context_mcp → navigate → javascript_tool; add ?v=N to bust cache). Kill with `pkill -f 'http.server 8765'`. (Sandbox bash CANNOT reach Google/OSM — allowlist-blocked; never test there.)
-3. Ship: `cd /tmp/aiap-repo && git pull && cp master → index.html && cp index.html FreeWheelers-App.html && git add -A && git commit && git push origin main` (via osascript). Pages redeploys itself (~1 min).
+3. Ship: `cd /tmp/aiap-repo && git pull && cp master → app.html && cp app.html FreeWheelers-App.html && git add -A && git commit && git push origin main` (via osascript). Pages redeploys itself (~1 min). NOTE: `index.html` is Geoff's landing page — do NOT overwrite it with the app.
 4. Netlify redeploy: `npx -y netlify-cli deploy --prod --dir . --site 2c31afd2-fcfa-453d-8387-883b2870a5e4` from /tmp/aiap-repo.
 5. Verify on the live URL(s) before reporting done. Google console changes propagate in ≤5 min.
 
